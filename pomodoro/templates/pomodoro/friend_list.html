@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body_class %}default-page{% endblock %}
+
+{% block content %}
+<style>
+    .friend-page-container {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        text-align: center;
+        backdrop-filter: blur(12px);
+        color: white;
+    }
+
+    .friend-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .friend-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+        margin-top: 20px;
+    }
+
+    .friend-card {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 20px;
+        border-radius: 15px;
+        width: 160px;
+        text-align: center;
+        box-shadow: 0 6px 15px rgba(135, 75, 233, 0.3);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .friend-card:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(135, 75, 233, 0.5);
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        object-fit: cover;
+        margin-bottom: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-pic:hover {
+        transform: rotate(3deg) scale(1.05);
+    }
+
+    .no-friends {
+        font-size: 18px;
+        margin-top: 30px;
+        opacity: 0.8;
+    }
+</style>
+
+<div class="friend-page-container">
+    <h2 class="friend-title">👥 Arkadaşların</h2>
+
+    {% if friends %}
+        <div class="friend-container">
+            {% for friend in friends %}
+                <div class="friend-card">
+                    <img src="https://via.placeholder.com/100" alt="Profil Resmi" class="profile-pic">
+                    <p>{{ friend.username }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-friends">Hiç arkadaşın yok 😢 Hadi yeni arkadaşlar ekle!</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body_class %}default-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Giriş Yap</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">🔐 Giriş Yap</button>
+    </form>
+    <a href="{% url 'register' %}">Hesabın yok mu? Hemen kayıt ol. ➡️</a>
+</div>
+{% endblock %}
+

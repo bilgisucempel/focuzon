@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body_class %}default-page{% endblock %}
+
+{% block content %}
+<style>
+    .requests-page-container {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 40px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        text-align: center;
+        backdrop-filter: blur(12px);
+        color: white;
+    }
+
+    .request-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    .request-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .request-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px 25px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        transition: background 0.3s;
+    }
+
+    .request-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .no-requests {
+        font-size: 18px;
+        margin-top: 30px;
+        opacity: 0.8;
+    }
+</style>
+
+<div class="requests-page-container">
+    <h2 class="request-title">📄 Gelen Arkadaşlık İstekleri</h2>
+
+    {% if requests %}
+        <ul class="request-list">
+            {% for request in requests %}
+                <li class="request-item">{{ request.sender.username }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-requests">Hiç bekleyen isteğin yok 😢</p>
+    {% endif %}
+</div>
+{% endblock %}
