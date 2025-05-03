@@ -93,9 +93,15 @@ def complete_pomodoro(request, session_id):
         if session.is_completed:
             return JsonResponse({"status": "error", "message": "Bu oturum zaten tamamlandı!"})
 
+        data = json.loads(request.body)
+        elapsed_seconds = data.get("elapsed_time")
+
+        if elapsed_seconds is None:
+            return JsonResponse({"status": "error", "message": "Geçen süre alınamadı!"})
+
         now_time = now()
         session.end_time = now_time
-        session.duration = now_time - session.start_time
+        session.duration = timedelta(seconds=elapsed_seconds)  # 👈 Gerçek geçen süre
         session.is_completed = True
         session.save()
 
@@ -105,7 +111,6 @@ def complete_pomodoro(request, session_id):
         })
 
     return JsonResponse({"status": "error", "message": "Geçersiz istek!"})
-
 
 # ---------------------------
 

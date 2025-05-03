@@ -16,7 +16,7 @@
     --text-color: #eeeeee;
     --card-bg: #1a1a2e;
     --accent-color: #a87ff3;
-    --gradient-bg: linear-gradient(135deg, #1e003b, #3e1f78, #283593, #000003);
+    --gradient-bg: linear-gradient(135deg, #1e003b, #3e1f78, #283593, #000003python manage.py);
 }
 
 body {

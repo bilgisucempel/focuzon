@@ -25,8 +25,19 @@ def user_logout(request):
     logout(request)
     return redirect("home")
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser
+
 def home(request):
-    return render(request, "home.html", {"profile": request.user})
+    profile = None
+    if request.user.is_authenticated:
+        try:
+            profile = request.user
+        except:
+            profile = None
+    return render(request, "home.html", {"profile": profile})
+
 
 @login_required
 def profile_view(request):

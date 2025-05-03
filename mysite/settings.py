@@ -143,8 +143,3 @@ from dotenv import load_dotenv
 
 # .env dosyasını BASE_DIR'den yükle
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
-
-# Artık gizli bilgileri buradan alabilirsin:
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG') == 'True'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')

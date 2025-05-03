@@ -15,7 +15,8 @@
             <a href="{% url 'register' %}" class="btn btn-secondary" style="width: 200px;">📝 Kayıt Ol</a>
         </div>
     {% else %}
-        <img src="{{ profile.profile_pic.url }}" class="profile-pic-home" alt="Profil Fotoğrafı">
+    <img src="{{ profile.profile_pic.url }}" class="profile-pic-home" alt="Profil Fotoğrafı">
+
         <div class="hero-buttons">
             <a href="{% url 'profile' %}" class="btn-glass">✨ Profilini Düzenle</a>
             <a href="{% url 'start_pomodoro' %}" class="btn-glass">⏱️ Odaklanmaya Başla</a>
