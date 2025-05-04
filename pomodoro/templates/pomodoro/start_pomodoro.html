@@ -59,8 +59,6 @@
     }
 </style>
 
-<img src="{% static 'images/focuzon_logo_.png' %}" alt="Focuzon Logo" class="focuzon-logo">
-
 <div class="container">
     <h2 class="section-title">Pomodoro Sayaç</h2>
     <p class="sub-text">Seçtiğin süre boyunca odaklan ve üretkenliğini artır! </p>
@@ -131,6 +129,8 @@ let timeLeft = 0;
 let elapsedTime = 0;
 let isRunning = false;
 let sessionId = null;
+let totalDuration = 0;  // Başlangıçta seçilen süre (saniye cinsinden)
+
 
 function updateDisplay() {
     let minutes = Math.floor(timeLeft / 60);
@@ -141,6 +141,15 @@ function updateDisplay() {
     document.title = `⏳ ${formatted} - Focuzon`; // sekme başlığı da burada
 }
 
+function updateProgressBar() {
+    if (totalDuration > 0) {
+        const progressPercent = ((totalDuration - timeLeft) / totalDuration) * 100;
+        console.log("progress: ", progressPercent); // 🪵 log eklendi
+        document.getElementById("progressBar").style.width = `${progressPercent}%`;
+    } else {
+        console.log("totalDuration not set"); // debug için
+    }
+}
 
 function startCountdown() {
     clearInterval(timer);
@@ -152,6 +161,7 @@ function startCountdown() {
         timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
         elapsedTime++
         updateDisplay();
+        updateProgressBar();
 
         if (timeLeft <= 0) {
             clearInterval(timer);
@@ -187,6 +197,8 @@ document.getElementById("startBtn")?.addEventListener("click", function () {
     const durationSelect = document.querySelector("#id_duration");
     if (durationSelect && durationSelect.value) {
         timeLeft = parseInt(durationSelect.value) * 60;
+        totalDuration = timeLeft;
+
         elapsedTime = 0;
         updateDisplay();
 
@@ -286,6 +298,10 @@ document.getElementById("clearSessions").addEventListener("click", function() {
 
 });
 
+
+
 </script>
+
+
 
 {% endblock %}
