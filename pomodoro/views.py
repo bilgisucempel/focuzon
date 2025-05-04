@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
-
+from django.utils.timezone import localtime
 from .models import PomodoroSession
 from .utils import get_total_duration, format_duration
 
@@ -78,7 +78,8 @@ def get_active_pomodoro(request):
             "status": "active",
             "session_id": session.id,
             "remaining_time": int(remaining_time),
-            "total_duration": int(session.duration.total_seconds())
+            "total_duration": int(session.duration.total_seconds()),
+            "start_time": localtime(session.start_time).isoformat()
         })
 
     return JsonResponse({"status": "inactive"})

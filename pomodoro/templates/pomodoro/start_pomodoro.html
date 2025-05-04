@@ -154,9 +154,10 @@ function updateProgressBar() {
 }
 
 function startCountdown() {
-    startTimestamp = Date.now();
+    if (!startTimestamp) {
+        startTimestamp = Date.now(); // sadece ilk defa başlarken ayarla
+    }
     clearInterval(timer);
-
     const endTime = Date.now() + timeLeft * 1000; // 🕒 bitiş zamanını hesapla
 
     timer = setInterval(() => {
@@ -186,7 +187,8 @@ window.addEventListener("DOMContentLoaded", function () {
                 sessionId = data.session_id;
                 document.getElementById("session_id").value = sessionId;
 
-                startTimestamp = Date.now() - (data.remaining_time * 1000);
+                startTimestamp = new Date(data.start_time).getTime();
+
 
 
                 updateDisplay();
