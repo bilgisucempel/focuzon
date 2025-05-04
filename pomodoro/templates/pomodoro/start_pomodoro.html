@@ -150,6 +150,7 @@ function startCountdown() {
     timer = setInterval(() => {
         const now = Date.now();
         timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
+        elapsedTime++
         updateDisplay();
 
         if (timeLeft <= 0) {
@@ -157,7 +158,7 @@ function startCountdown() {
             alert("Süre doldu!");
             document.getElementById("completeBtn").click();
         }
-    }, 200);
+    }, 1000);
 }
 
 // ✅ SAYFA YENİLENİNCE AKTİF OTURUM VARSA GERİ YÜKLE
