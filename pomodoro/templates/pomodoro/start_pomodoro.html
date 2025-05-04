@@ -77,6 +77,13 @@
                 <option value="20">20 Dakika</option>
                 <option value="25">25 Dakika</option>
                 <option value="30">30 Dakika</option>
+                <option value="5"> 35 Dakika</option>
+                <option value="10">40 Dakika</option>
+                <option value="15">45Dakika</option>
+                <option value="20">50 Dakika</option>
+                <option value="25">55 Dakika</option>
+                <option value="30">60 Dakika</option>
+
             </select>
         </div>
         <button type="button" class="btn btn-success mt-3 w-100" id="startBtn">🚀 Başlat</button>
@@ -117,132 +124,167 @@
 
 <input type="hidden" id="session_id" value="">
 
-<script>
+
+    <script>
 let timer;
 let timeLeft = 0;
-let isRunning = false;
 let elapsedTime = 0;
+let isRunning = false;
 let sessionId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    const startBtn = document.getElementById("startBtn");
-    const pauseBtn = document.getElementById("pauseBtn");
-    const resumeBtn = document.getElementById("resumeBtn");
-    const completeBtn = document.getElementById("completeBtn");
-    const durationSelect = document.getElementById("id_duration");
-    const timerDisplay = document.getElementById("timer");
-    const successMessage = document.getElementById("successMessage");
-    const progressBar = document.getElementById("progressBar");
+function updateDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-    // Başlat butonu
-    startBtn.addEventListener("click", () => {
-        const duration = parseInt(durationSelect.value);
-        if (!duration || isNaN(duration)) return alert("Lütfen süre seçin!");
+    document.getElementById("timer").textContent = formatted;
+    document.title = `⏳ ${formatted} - Focuzon`; // sekme başlığı da burada
+}
 
-        timeLeft = duration * 60;
+
+function startCountdown() {
+    clearInterval(timer);
+
+    const endTime = Date.now() + timeLeft * 1000; // 🕒 bitiş zamanını hesapla
+
+    timer = setInterval(() => {
+        const now = Date.now();
+        timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            alert("Süre doldu!");
+            document.getElementById("completeBtn").click();
+        }
+    }, 200);
+}
+
+// ✅ SAYFA YENİLENİNCE AKTİF OTURUM VARSA GERİ YÜKLE
+window.addEventListener("DOMContentLoaded", function () {
+    fetch("/pomodoro/get_active/")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "active" && data.remaining_time > 0) {
+                timeLeft = data.remaining_time;
+                elapsedTime = 0;
+                sessionId = data.session_id;
+                document.getElementById("session_id").value = sessionId;
+
+                updateDisplay();
+
+                document.getElementById("startBtn").style.display = "none";
+                document.getElementById("pauseBtn").style.display = "block";
+                document.getElementById("completeBtn").style.display = "block";
+
+                startCountdown();
+            }
+        });
+});
+
+document.getElementById("startBtn")?.addEventListener("click", function () {
+    const durationSelect = document.querySelector("#id_duration");
+    if (durationSelect && durationSelect.value) {
+        timeLeft = parseInt(durationSelect.value) * 60;
         elapsedTime = 0;
         updateDisplay();
-        updateProgress();
+
+        document.getElementById("startBtn").style.display = "none";
+        document.getElementById("pauseBtn").style.display = "block";
+        document.getElementById("completeBtn").style.display = "block";
 
         fetch("/pomodoro/start/", {
             method: "POST",
             headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
                 "Content-Type": "application/json",
-                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
             },
-            body: JSON.stringify({ duration })
+            body: JSON.stringify({ duration: durationSelect.value })
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === "started") {
                 sessionId = data.session_id;
+                document.getElementById("session_id").value = sessionId;
                 startCountdown();
-                startBtn.style.display = "none";
-                pauseBtn.style.display = "block";
-                completeBtn.style.display = "block";
             } else {
-                alert(data.message || "Başlatılamadı.");
+                alert(data.message || "Oturum başlatılamadı!");
             }
         });
+    } else {
+        alert("Lütfen bir süre seç!");
+    }
+});
+
+document.getElementById("pauseBtn")?.addEventListener("click", function () {
+    clearInterval(timer);
+    document.getElementById("pauseBtn").style.display = "none";
+    document.getElementById("resumeBtn").style.display = "block";
+});
+
+document.getElementById("resumeBtn")?.addEventListener("click", function () {
+    document.getElementById("resumeBtn").style.display = "none";
+    document.getElementById("pauseBtn").style.display = "block";
+    startCountdown();
+});
+
+document.getElementById("completeBtn")?.addEventListener("click", function () {
+    clearInterval(timer);
+
+    const hiddenId = document.getElementById("session_id").value;
+    const finalSessionId = hiddenId || sessionId;
+
+    if (!finalSessionId) {
+        alert("Hata: Oturum ID bulunamadı!");
+        return;
+    }
+
+    fetch(`/pomodoro/complete/${finalSessionId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ elapsed_time: elapsedTime })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "completed") {
+            alert("Çalışma tamamlandı! Süren kaydedildi.");
+            window.location.href = "{% url 'start_pomodoro' %}";
+        } else {
+            alert("Hata: " + data.message);
+        }
     });
+});
 
-    // Duraklat
-    pauseBtn.addEventListener("click", () => {
-        clearInterval(timer);
-        pauseBtn.style.display = "none";
-        resumeBtn.style.display = "block";
-    });
-
-    // Devam et
-    resumeBtn.addEventListener("click", () => {
-        resumeBtn.style.display = "none";
-        pauseBtn.style.display = "block";
-        startCountdown();
-    });
-
-    // Çalışmayı Bitir
-    completeBtn.addEventListener("click", () => {
-        clearInterval(timer);
-
-        fetch(`/pomodoro/complete/${sessionId}/`, {
+document.getElementById("clearSessions").addEventListener("click", function() {
+    if (confirm("Geçmiş oturumlarınızı silmek istediğinizden emin misiniz?")) {
+        fetch("/pomodoro/clear_sessions/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-            },
-            body: JSON.stringify({ elapsed_time: elapsedTime })
+            }
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === "completed") {
-                successMessage.style.display = "block";
-                pauseBtn.style.display = "none";
-                resumeBtn.style.display = "none";
-                completeBtn.style.display = "none";
+            if (data.status === "success") {
+                alert("Geçmiş oturumlar başarıyla silindi.");
+                window.location.reload();  // Sayfayı yenileyerek değişiklikleri gösteriyoruz
             } else {
-                alert(data.message || "Bir hata oluştu.");
+                alert("Bir hata oluştu. Lütfen tekrar deneyin.");
             }
+        })
+        .catch(error => {
+            console.error("Bir hata oluştu:", error);
+            alert("Bir hata oluştu, tekrar deneyin.");
         });
-    });
-
-    function startCountdown() {
-        timer = setInterval(() => {
-            timeLeft--;
-            elapsedTime++;
-            updateDisplay();
-            updateProgress();
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                completeBtn.click();
-            }
-        }, 1000);
     }
 
-    function updateDisplay() {
-        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-        const seconds = String(timeLeft % 60).padStart(2, "0");
-        timerDisplay.textContent = `${minutes}:${seconds}`;
-    }
 
-    function updateProgress() {
-        const total = parseInt(durationSelect.value) * 60;
-        const percent = ((total - timeLeft) / total) * 100;
-        progressBar.style.width = `${percent}%`;
-    }
-
-    // Geçmiş oturumları temizle
-    document.getElementById("clearSessions")?.addEventListener("click", () => {
-        if (confirm("Geçmiş oturumları silmek istediğine emin misin?")) {
-            fetch("/pomodoro/clear_sessions/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-                }
-            }).then(() => location.reload());
-        }
-    });
 });
+
 </script>
 
 {% endblock %}
