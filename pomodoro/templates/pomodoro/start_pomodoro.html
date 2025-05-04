@@ -129,7 +129,9 @@ let timeLeft = 0;
 let elapsedTime = 0;
 let isRunning = false;
 let sessionId = null;
-let totalDuration = 0;  // Başlangıçta seçilen süre (saniye cinsinden)
+let totalDuration = 0;
+let startTimestamp = null;
+// Başlangıçta seçilen süre (saniye cinsinden)
 
 
 function updateDisplay() {
@@ -152,6 +154,7 @@ function updateProgressBar() {
 }
 
 function startCountdown() {
+    startTimestamp = Date.now();
     clearInterval(timer);
 
     const endTime = Date.now() + timeLeft * 1000; // 🕒 bitiş zamanını hesapla
@@ -181,6 +184,9 @@ window.addEventListener("DOMContentLoaded", function () {
                 elapsedTime = 0;
                 sessionId = data.session_id;
                 document.getElementById("session_id").value = sessionId;
+
+                startTimestamp = Date.now() - (data.remaining_time * 1000);
+
 
                 updateDisplay();
 
@@ -252,13 +258,19 @@ document.getElementById("completeBtn")?.addEventListener("click", function () {
         return;
     }
 
+    // Gerçek süre hesapla (fallback olarak elapsedTime)
+    let actualElapsed = elapsedTime;
+    if (startTimestamp) {
+        actualElapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+    }
+
     fetch(`/pomodoro/complete/${finalSessionId}/`, {
         method: "POST",
         headers: {
             "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ elapsed_time: elapsedTime })
+        body: JSON.stringify({ elapsed_time: actualElapsed })
     })
     .then(response => response.json())
     .then(data => {
