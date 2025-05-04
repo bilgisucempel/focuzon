@@ -181,6 +181,7 @@ window.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.status === "active" && data.remaining_time > 0) {
                 timeLeft = data.remaining_time;
+                totalDuration = data.total_duration || data.remaining_time;
                 elapsedTime = 0;
                 sessionId = data.session_id;
                 document.getElementById("session_id").value = sessionId;

@@ -77,7 +77,8 @@ def get_active_pomodoro(request):
         return JsonResponse({
             "status": "active",
             "session_id": session.id,
-            "remaining_time": int(remaining_time)
+            "remaining_time": int(remaining_time),
+            "total_duration": int(session.duration.total_seconds())
         })
 
     return JsonResponse({"status": "inactive"})
