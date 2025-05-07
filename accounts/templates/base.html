@@ -38,8 +38,11 @@
 </nav>
 
 <!-- SADECE ANASAYFADA ARKAPLAN LOGOSU -->
+
 {% if request.resolver_match.url_name == 'home' %}
-    <img src="{% static 'images/focuzon_logo_.png' %}" class="focuzon-main-logo" alt="Focuzon Logo">
+<img src="{% static 'images/focuzon_logo_.png' %}" alt="Focuzon Logo"
+     style="position: fixed; top: 50%; left: 35%; transform: translate(-50%, -50%);
+            z-index: -1; width: 650px; pointer-events: none;">
 {% endif %}
 
 <!-- SAYFA İÇERİĞİ -->
