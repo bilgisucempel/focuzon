@@ -1,24 +1,41 @@
 {% extends "base.html" %}
+{% block title %}Register | Focuzon{% endblock %}
 {% block body_class %}register-page{% endblock %}
 
 {% block content %}
-<div class="register-container">
-    <div class="register-card">
-        <h2>📝 Kayıt Ol</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">{{ form.username.label_tag }}{{ form.username }}</div>
-            <div class="form-group">{{ form.email.label_tag }}{{ form.email }}</div>
-            <div class="form-group">{{ form.password1.label_tag }}{{ form.password1 }}</div>
-            <div class="form-group">{{ form.password2.label_tag }}{{ form.password2 }}</div>
-            <button type="submit" class="btn-register">🚀 Kayıt Ol</button>
-        </form>
-        <p class="login-redirect">Zaten bir hesabın var mı? <a href="{% url 'login' %}">Giriş yap 🔑</a></p>
-        <ul class="password-hints">
-            <li>Şifren en az 8 karakter olmalı</li>
-            <li>Çok basit ya da sadece sayılardan oluşmamalı</li>
-        </ul>
+<div class="form-container">
+  <h2 class="text-2xl font-bold text-white mb-6">Create your Focuzon account</h2>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.username.label_tag }}
+      {{ form.username }}
     </div>
+    <div class="form-group">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+    </div>
+    <div class="form-group">
+      {{ form.password1.label_tag }}
+      {{ form.password1 }}
+    </div>
+    <div class="form-group">
+      {{ form.password2.label_tag }}
+      {{ form.password2 }}
+    </div>
+
+    <button type="submit" class="btn-register">Register</button>
+  </form>
+
+  <p class="login-redirect mt-4">
+    Already have an account? <a href="{% url 'login' %}" class="text-indigo-300 hover:underline">Log in</a>
+  </p>
+
+  <ul class="password-hints mt-4">
+    <li>Password must be at least 8 characters long.</li>
+    <li>It should not be entirely numeric or too common.</li>
+  </ul>
 </div>
 {% endblock %}
 

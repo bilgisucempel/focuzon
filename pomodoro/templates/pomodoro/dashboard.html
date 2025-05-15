@@ -1,96 +1,70 @@
 {% extends 'base.html' %}
-
 {% block title %}Productivity Dashboard{% endblock %}
 
 {% block content %}
-<!-- Bootstrap CDN for Styling -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">📊 Productivity Dashboard</h1>
 
-<div class="container mt-5">
-    <h1 class="text-center mb-4">📊 Productivity Dashboard</h1>
-
-
-    <div class="row text-center">
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-primary">
-                <div class="card-body">
-                    <h4>Today</h4>
-                    <p>⏱️ Total Time: <strong>{{ daily_total }}</strong></p>
-                    <p>✅ Sessions: <strong>{{ daily_count }}</strong></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-success">
-                <div class="card-body">
-                    <h4>This Week</h4>
-                    <p>⏱️ Total Time: <strong>{{ weekly_total }}</strong></p>
-                    <p>✅ Sessions: <strong>{{ weekly_count }}</strong></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm border-warning">
-                <div class="card-body">
-                    <h4>This Month</h4>
-                    <p>⏱️ Total Time: <strong>{{ monthly_total }}</strong></p>
-                    <p>✅ Sessions: <strong>{{ monthly_count }}</strong></p>
-                </div>
-            </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Today</h2>
+            <p>⏱️ Total Time: <span class="font-bold text-indigo-600 dark:text-indigo-300">{{ daily_total }}</span></p>
+            <p>✅ Sessions: <span class="font-bold text-gray-800 dark:text-white">{{ daily_count }}</span></p>
         </div>
 
-</div>
-    <!-- Buttons for Interactive Chart -->
-    <div class="text-center my-4">
-        <button class="btn btn-primary mx-2" onclick="loadChart('daily')">Daily</button>
-        <button class="btn btn-success mx-2" onclick="loadChart('weekly')">Weekly</button>
-        <button class="btn btn-warning mx-2" onclick="loadChart('monthly')">Monthly</button>
+        <div class="bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">This Week</h2>
+            <p>⏱️ Total Time: <span class="font-bold text-indigo-600 dark:text-indigo-300">{{ weekly_total }}</span></p>
+            <p>✅ Sessions: <span class="font-bold text-gray-800 dark:text-white">{{ weekly_count }}</span></p>
+        </div>
+
+        <div class="bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">This Month</h2>
+            <p>⏱️ Total Time: <span class="font-bold text-indigo-600 dark:text-indigo-300">{{ monthly_total }}</span></p>
+            <p>✅ Sessions: <span class="font-bold text-gray-800 dark:text-white">{{ monthly_count }}</span></p>
+        </div>
+    </div>
+
+    <!-- Chart Filter Buttons -->
+    <div class="flex justify-center gap-4 mt-12">
+        <button onclick="loadChart('daily')" class="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition">Daily</button>
+        <button onclick="loadChart('weekly')" class="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition">Weekly</button>
+        <button onclick="loadChart('monthly')" class="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition">Monthly</button>
     </div>
 
     <!-- Chart Canvas -->
-    <canvas id="dynamicChart" style="max-height: 400px;"></canvas>
+    <div class="mt-10">
+        <canvas id="dynamicChart" class="w-full max-h-96"></canvas>
+    </div>
 </div>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    // Grafik örneği
     let chartInstance;
 
-    // Tüm veriler burada!
     const chartData = {
-        daily: {
-            labels: {{ daily_labels|safe }},
-            data: {{ daily_data|safe }},
-            label: "Today's Focus (minutes)"
-        },
-        weekly: {
-            labels: ['Total This Week'],
-            data: [{{ weekly_total_minutes|default:0 }}],
-            label: "Weekly Total Focus (minutes)"
-        },
-        monthly: {
-            labels: {{ monthly_labels|safe }},
-            data: {{ monthly_data|safe }},
-            label: "Daily Focus in Last 30 Days (minutes)"
-        }
-    };
+    daily: {
+        labels: {{ chart_labels|safe }},
+        data: {{ chart_data|safe }},
+        label: "Today's Focus (minutes)"
+    },
+    weekly: {
+        labels: ["Total This Week"],
+        data: [{{ weekly_total_minutes|default:0 }}],
+        label: "Weekly Total Focus (minutes)"
+    },
+    monthly: {
+        labels: {{ chart_labels|safe }},
+        data: {{ chart_data|safe }},
+        label: "Daily Focus in Last 30 Days (minutes)"
+    }
+};
 
-    // Sayfa yüklenince otomatik haftalık grafiği getiriyoruz
-    document.addEventListener("DOMContentLoaded", function() {
-        loadChart('weekly');
-
-    // GLOBAL fonksiyon — butonlar bunu çağıracak
-    window.loadChart = function(type) {
+    function loadChart(type) {
         const ctx = document.getElementById('dynamicChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
 
-        // Önce eski grafik varsa yok et
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        // Yeni grafik oluştur
         chartInstance = new Chart(ctx, {
             type: type === 'weekly' ? 'bar' : 'line',
             data: {
@@ -98,8 +72,8 @@
                 datasets: [{
                     label: chartData[type].label,
                     data: chartData[type].data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(168, 127, 243, 0.4)',
+                    borderColor: 'rgba(168, 127, 243, 1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
@@ -119,10 +93,8 @@
         });
     }
 
-    // Sayfa yüklenince otomatik haftalık grafiği getiriyoruz
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
         loadChart('weekly');
     });
 </script>
-
 {% endblock %}

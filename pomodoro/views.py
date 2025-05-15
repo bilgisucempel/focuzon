@@ -11,6 +11,16 @@ from django.utils import timezone
 from django.utils.timezone import localtime
 from .models import PomodoroSession
 from .utils import get_total_duration, format_duration
+import json
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import PomodoroSession
+from .utils import get_total_duration, format_duration  # varsa
+
 
 # ---------------------------
 
@@ -135,48 +145,48 @@ def clear_sessions(request):
 
 # ---------------------------
 
+from datetime import timedelta
+from collections import defaultdict
+
 @login_required
 def dashboard(request):
-    current_time = timezone.now()
+    now = timezone.now().date()
+    week_start = now - timedelta(days=6)
 
-    today_start = current_time.replace(hour=0, minute=0, second=0, microsecond=0)
-    week_ago = current_time - timedelta(days=7)
-    month_ago = current_time - timedelta(days=30)
-
-    daily_sessions = PomodoroSession.objects.filter(user=request.user, start_time__gte=today_start, is_completed=True)
-    weekly_sessions = PomodoroSession.objects.filter(user=request.user, start_time__gte=week_ago, is_completed=True)
-    monthly_sessions = PomodoroSession.objects.filter(user=request.user, start_time__gte=month_ago, is_completed=True)
-
-    daily_total = get_total_duration(daily_sessions)
-    weekly_total = get_total_duration(weekly_sessions)
-    monthly_total = get_total_duration(monthly_sessions)
-
-    context = {
-        'daily_total': format_duration(daily_total),
-        'weekly_total': format_duration(weekly_total),
-        'monthly_total': format_duration(monthly_total),
-        'daily_count': daily_sessions.count(),
-        'weekly_count': weekly_sessions.count(),
-        'monthly_count': monthly_sessions.count(),
-    }
-
-    last_7_days = PomodoroSession.objects.filter(
+    # Verileri çek
+    sessions = PomodoroSession.objects.filter(
         user=request.user,
-        start_time__gte=current_time - timedelta(days=7),
-        is_completed=True
-    ).annotate(day=TruncDate('start_time')).values('day').annotate(total_duration=Sum('duration')).order_by('day')
+        is_completed=True,
+        start_time__date__gte=week_start
+    ).annotate(day=TruncDate('start_time')) \
+     .values('day') \
+     .annotate(total=Sum('duration')) \
+     .order_by('day')
+
+    # Günlük süreleri haritalayalım
+    duration_map = {entry['day']: int(entry['total'].total_seconds() // 60) for entry in sessions}
 
     labels = []
     data = []
+    for i in range(7):
+        day = week_start + timedelta(days=i)
+        labels.append(day.strftime('%a'))  # Mon, Tue, ...
+        data.append(duration_map.get(day, 0))
 
-    for entry in last_7_days:
-        labels.append(entry['day'].strftime('%d %b'))
-        minutes = int(entry['total_duration'].total_seconds() // 60)
-        data.append(minutes)
-
-    context.update({
-        'chart_labels': labels,
-        'chart_data': data
-    })
+    context = {
+        'chart_labels': json.dumps(labels),
+        'chart_data': json.dumps(data),
+        'daily_labels': json.dumps(labels),
+        'daily_data': json.dumps(data),
+        'monthly_labels': json.dumps(labels),
+        'monthly_data': json.dumps(data),
+        'weekly_total_minutes': sum(data),
+        'daily_total': f"{data[-1]} min",
+        'weekly_total': f"{sum(data)} min",
+        'monthly_total': f"{sum(data)} min",
+        'daily_count': len([d for d in data if d > 0]),
+        'weekly_count': len([d for d in data if d > 0]),
+        'monthly_count': len([d for d in data if d > 0]),
+    }
 
     return render(request, 'pomodoro/dashboard.html', context)

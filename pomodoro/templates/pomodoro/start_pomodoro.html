@@ -1,126 +1,68 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Pomodoro Başlat{% endblock %}
+{% block title %}Start Pomodoro | Focuzon{% endblock %}
+{% block body_class %}pomodoro-page{% endblock %}
 
 {% block content %}
-<style>
-    body {
-        font-family: 'Sora', sans-serif;
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: start;
-        background: linear-gradient(to right, #ffdee9, #b5fffc);
-        transition: background 0.5s ease;
-    }
+<div class="mt-20 bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl p-10 max-w-md mx-auto text-center">
+  <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Pomodoro Timer</h2>
+  <p class="text-gray-700 dark:text-gray-300 text-sm mb-6">Choose your focus duration and stay productive!</p>
 
-    body.dark-mode {
-        background: linear-gradient(to right, #1f0036, #000000);
-    }
+  <form method="POST" id="pomodoro-form" class="space-y-4 text-left">
+    {% csrf_token %}
+    <label for="id_duration" class="block text-gray-800 dark:text-white font-semibold">Select Duration:</label>
+    <select id="id_duration" name="duration" class="w-full p-2 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+      <option value="">-- Select Time --</option>
+      <option value="5">5 Minutes</option>
+      <option value="10">10 Minutes</option>
+      <option value="15">15 Minutes</option>
+      <option value="20">20 Minutes</option>
+      <option value="25">25 Minutes</option>
+      <option value="30">30 Minutes</option>
+      <option value="35">35 Minutes</option>
+      <option value="40">40 Minutes</option>
+      <option value="45">45 Minutes</option>
+      <option value="50">50 Minutes</option>
+      <option value="55">55 Minutes</option>
+      <option value="60">60 Minutes</option>
+    </select>
+    <button type="button" id="startBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition">🚀 Start</button>
+  </form>
 
-    .container {
-        margin-top: 80px;
-        background: linear-gradient(135deg, #ffffff, #d1b4ff);
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        color: #333;
-    }
-    .dark-mode .container {
-        background: linear-gradient(135deg, #2d004d, #1c1c1c);
-        color: #fff;
-    }
-    .btn {
-        font-family: 'Sora', sans-serif;
-        padding: 10px 50px;
-        border-radius: 10px;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    .progress {
-        width: 100%;
-        background-color: #e3ebfd;
-        border-radius: 10px;
-        overflow: hidden;
-        height: 20px;
-    }
-    .progress-bar {
-        height: 100%;
-        background-color: #6a00f4;
-        width: 0%;
-        transition: width 0.3s;
-    }
-    .history {
-        margin-bottom: 80px;
-    }
-</style>
+  <h2 id="timer" class="text-gray-900 dark:text-white text-3xl font-bold mt-6">00:00</h2>
 
-<div class="container">
-    <h2 class="section-title">Pomodoro Sayaç</h2>
-    <p class="sub-text">Seçtiğin süre boyunca odaklan ve üretkenliğini artır! </p>
+  <div class="controls mt-4 space-y-3">
+    <button id="pauseBtn" class="w-full bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 text-purple-800 dark:text-white py-2 rounded-lg font-semibold transition" style="display: none;">⏸ Pause</button>
+    <button id="resumeBtn" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-semibold transition" style="display: none;">▶ Resume</button>
+    <button id="completeBtn" class="w-full bg-purple-300 dark:bg-purple-700 hover:bg-purple-400 dark:hover:bg-purple-600 text-white py-2 rounded-lg font-semibold transition" style="display: none;">🛑 End Session</button>
+  </div>
 
-    <form method="POST" id="pomodoro-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_duration" class="fw-bold">Çalışma Süresi Seç:</label>
-            <select id="id_duration" class="form-control">
-                <option value="">-- Süre Seç --</option>
-                <option value="5">5 Dakika</option>
-                <option value="10">10 Dakika</option>
-                <option value="15">15 Dakika</option>
-                <option value="20">20 Dakika</option>
-                <option value="25">25 Dakika</option>
-                <option value="30">30 Dakika</option>
-                <option value="35">35 Dakika</option>
-                <option value="40">40 Dakika</option>
-                <option value="55">45 Dakika</option>
-                <option value="50">50 Dakika</option>
-                <option value="55">55 Dakika</option>
-                <option value="60">60 Dakika</option>
+  <div class="progress w-full h-4 bg-white/30 rounded-lg overflow-hidden mt-6">
+    <div id="progressBar" class="progress-bar h-full bg-purple-400 transition-all duration-300" role="progressbar"></div>
+  </div>
 
-            </select>
-        </div>
-        <button type="button" class="btn btn-success mt-3 w-100" id="startBtn">🚀 Başlat</button>
-    </form>
+  <div id="successMessage" class="text-purple-500 text-center mt-5 text-lg font-medium" style="display:none;">
+    🎉 Well done! You’ve completed your session.
+  </div>
 
-    <h2 id="timer" class="fw-bold mt-4">00:00</h2>
-
-    <div class="controls">
-        <button id="pauseBtn" class="btn btn-warning w-100 mt-2" style="display: none;">⏸ Duraklat</button>
-        <button id="resumeBtn" class="btn btn-primary w-100 mt-2" style="display: none;">▶ Devam Et</button>
-        <button id="completeBtn" class="btn btn-danger w-100 mt-2" style="display: none;">🛑 Çalışmayı Bitir</button>
-    </div>
-
-    <div class="progress mt-3">
-       <div id="progressBar" class="progress-bar" role="progressbar"></div>
-    </div>
-    <div id="successMessage" style="display:none; margin-top:20px; font-size:18px; color:#6a00f4;">
-        🎉 Harika! Odaklanma süreni tamamladın!
-    </div>
-
-    <div class="history text-center mt-5">
-    <h3>📜 Geçmiş Oturumlar</h3>
-    <ul>
-        {% for session in past_sessions %}
-            <li>
-                ✅ {{ session.start_time|date:"d M Y H:i" }} -
-                {{ session.duration }} odaklanıldı ({{ session.formatted_duration }})
-            </li>
-        {% empty %}
-            <li>Henüz kayıtlı oturum yok.</li>
-        {% endfor %}
+  <div class="history text-gray-800 dark:text-white mt-10 text-sm text-left">
+    <h3 class="text-lg font-semibold mb-3">📜 Session History</h3>
+    <ul class="space-y-1">
+      {% for session in past_sessions %}
+        <li>
+           {{ session.start_time|date:"d M Y H:i" }} - {{ session.duration }} focused ({{ session.formatted_duration }})
+        </li>
+      {% empty %}
+        <li>No previous sessions found.</li>
+      {% endfor %}
     </ul>
-    <button id="clearSessions" class="btn btn-danger mt-3">Geçmiş Oturumları Sil</button>
-    <a href="{% url 'dashboard' %}" class="btn btn-primary mt-4">📊 Dashboard'a Git</a>
-</div>
-
+    <button id="clearSessions" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition mt-4">Clear Session History</button>
+    <a href="{% url 'dashboard' %}" class="w-full inline-block bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-semibold transition mt-3 text-center">📊 Go to Dashboard</a>
+  </div>
 </div>
 
 <input type="hidden" id="session_id" value="">
+
 
 
     <script>
