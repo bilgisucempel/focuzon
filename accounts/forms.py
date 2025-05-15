@@ -9,11 +9,12 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
-        model = User = get_user_model()
+        model = get_user_model()  # DÜZELTİLDİ ✅
         fields = ["username", "email", "password1", "password2"]
 
+
+# Profil düzenleme için form
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'profile_pic']
-

@@ -1,9 +1,11 @@
+
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Focuzon’a Hoş Geldin{% endblock %}
 {% block body_class %}home-page{% endblock %}
 
 {% block content %}
-<div class=" mt-20 bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl p-10 max-w-md mx-auto text-center">
+<div class="mt-20 bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl p-10 max-w-md mx-auto text-center">
   <h1 class="text-3xl font-bold mb-3">🕓 Focuzon’a Hoş Geldin!</h1>
   <p class="text-gray-700 dark:text-gray-300 mb-6">Hedeflerine odaklan, başarıya ulaş! 🚀</p>
 
@@ -13,7 +15,12 @@
       <a href="{% url 'register' %}" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition">📝 Kayıt Ol</a>
     </div>
   {% else %}
-    <img src="{{ profile.profile_pic.url }}" class="profile-pic-home mx-auto rounded-full w-28 h-28 object-cover shadow-md mb-4" alt="Profil Fotoğrafı" />
+    <div class="w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden shadow-md border-2 border-white/50">
+      <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{% static 'images/bospp1.png' %}{% endif %}"
+           alt="Profil Fotoğrafı"
+           class="w-full h-full object-cover" />
+    </div>
+
     <div class="flex flex-col gap-3">
       <a href="{% url 'profile' %}" class="btn-glass">✨ Profilini Düzenle</a>
       <a href="{% url 'start_pomodoro' %}" class="btn-glass">⏱️ Odaklanmaya Başla</a>
