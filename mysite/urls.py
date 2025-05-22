@@ -25,7 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),  # ✅ Kullanıcı işlemleri için
     path('', home, name='home'),
-    path("pomodoro/", include("pomodoro.urls")),# Pomodoro işlemlerini yönlendir
+    path("pomodoro/", include("pomodoro.urls")),
+    path('leaderboard/', include('leaderboard.urls')),
+    # Pomodoro işlemlerini yönlendir
 
 ] # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # Medya dosyalarını göstermek için:

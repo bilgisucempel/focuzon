@@ -1,0 +1,27 @@
+{% load static leaderboard_extras %}
+
+{% for user in dataset %}
+<li class="flex items-center gap-4">
+  <span class="w-6 text-sm font-bold text-purple-700 text-white text-right">
+    {{ forloop.counter }}.
+  </span>
+
+  {% if user.profile_pic %}
+    <img src="{{ user.profile_pic.url }}" class="pfp-small" alt="pfp">
+  {% else %}
+    <img src="{% static 'images/bospp1.png' %}" class="pfp-small" alt="pfp">
+  {% endif %}
+
+  {# kullanıcı adı – beyaz (light), eskisi gibi açık (dark) #}
+  <span class="flex-1 text-sm font-medium text-white dark:text-zinc-100 truncate max-w-[150px]">
+    {% if user.id == request.user.id %}⭐ {{ user.username }} (You){% else %}{{ user.username }}{% endif %}
+  </span>
+
+  {# süre – beyaz (light), mor (dark) #}
+  <span class="text-sm font-semibold text-white text-white">
+    {{ user.total_minutes|hm }}
+  </span>
+</li>
+{% empty %}
+<li class="text-center text-gray-600 dark:text-gray-400">No data yet.</li>
+{% endfor %}

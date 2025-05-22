@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static leaderboard_extras %}
+
+{% block content %}
+    <div class="min-h-screen grid place-items-center px-4 py-12">
+
+  <!-- Glass card ---------------------------------------------------- -->
+  <div class="w-full max-w-xl rounded-2xl bg-white/20 dark:bg-white/5
+              backdrop-blur-md ring-2 ring-purple-400/60 overflow-hidden">
+
+
+    <!-- TOP TABS: Weekly / Monthly ---------------------------------- -->
+    <div class="flex">
+      <button class="layer-btn flex-1 py-3 font-semibold text-white
+                     active-layer bg-purple-500 hover:bg-purple-600">
+        Weekly
+      </button>
+      <button class="layer-btn flex-1 py-3 font-semibold text-white
+                     bg-purple-400 hover:bg-purple-500">
+        Monthly
+      </button>
+    </div>
+
+    <!-- LAYER: WEEKLY ------------------------------------------------ -->
+    <section class="layer p-6 space-y-6 animate-fade-in">
+
+      <!-- inner tabs -->
+      <div class="flex border-b border-purple-300/40">
+        <button class="board-btn flex-1 py-2 font-semibold
+                       active-board text-purple-600 dark:text-purple-300">
+          Friends
+        </button>
+        <button class="board-btn flex-1 py-2 font-semibold">Global</button>
+      </div>
+
+      <ul class="board space-y-5">
+        {% include "leaderboard/_rows.html" with dataset=weekly_friends %}
+      </ul>
+      <ul class="board space-y-5 hidden">
+        {% include "leaderboard/_rows.html" with dataset=weekly_global %}
+      </ul>
+    </section>
+
+    <!-- LAYER: MONTHLY ---------------------------------------------- -->
+    <section class="layer p-6 space-y-6 hidden">
+
+      <div class="flex border-b border-purple-300/40">
+        <button class="board-btn flex-1 py-2 font-semibold
+                       active-board text-purple-600 dark:text-purple-300">
+          Friends
+        </button>
+        <button class="board-btn flex-1 py-2 font-semibold">Global</button>
+      </div>
+
+      <ul class="board space-y-5">
+        {% include "leaderboard/_rows.html" with dataset=monthly_friends %}
+      </ul>
+      <ul class="board space-y-5 hidden">
+        {% include "leaderboard/_rows.html" with dataset=monthly_global %}
+      </ul>
+    </section>
+
+  </div>
+</div>
+
+<!-- tiny css helpers ----------------------------------------------- -->
+<style>
+@keyframes fade {from{opacity:.0;transform:translateY(6px)}
+                 to{opacity:1;transform:none}}
+.animate-fade-in{animation:fade .25s ease-out}
+.layer-btn.active-layer{background:#7c3aed!important}
+.board-btn.active-board{color:#7c3aed;border-bottom:2px solid #7c3aed}
+.board img.pfp-small{
+  width:40px;height:40px;border-radius:50%;object-fit:cover;
+  border:2px solid #c4b5fd
+}
+</style>
+
+<!-- LIVELY but 12-line JS :) --------------------------------------- -->
+<script>
+/* upper layers */
+document.querySelectorAll('.layer-btn').forEach((btn,i)=>{
+  btn.onclick=_=>{
+    document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active-layer'));
+    btn.classList.add('active-layer');
+    document.querySelectorAll('.layer').forEach((lay,j)=>{
+      lay.classList.toggle('hidden', i!==j);
+      if(i===j){ lay.classList.add('animate-fade-in'); setTimeout(()=>lay.classList.remove('animate-fade-in'),250);}
+    });
+  };
+});
+
+/* inner boards (delegate) */
+document.querySelectorAll('.layer').forEach(layer=>{
+  layer.querySelectorAll('.board-btn').forEach((btn,i)=>{
+    btn.onclick=_=>{
+      layer.querySelectorAll('.board-btn').forEach(b=>b.classList.remove('active-board'));
+      btn.classList.add('active-board');
+      layer.querySelectorAll('.board').forEach((brd,j)=>brd.classList.toggle('hidden', i!==j));
+    };
+  });
+});
+</script>
+{% endblock %}
