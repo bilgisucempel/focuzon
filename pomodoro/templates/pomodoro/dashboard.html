@@ -40,26 +40,34 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     let chartInstance;
 
     const chartData = {
-    daily: {
-        labels: {{ chart_labels|safe }},
-        data: {{ chart_data|safe }},
-        label: "Today's Focus (minutes)"
-    },
-    weekly: {
-        labels: ["Total This Week"],
-        data: [{{ weekly_total_minutes|default:0 }}],
-        label: "Weekly Total Focus (minutes)"
-    },
-    monthly: {
-        labels: {{ chart_labels|safe }},
-        data: {{ chart_data|safe }},
-        label: "Daily Focus in Last 30 Days (minutes)"
+        daily: {
+            labels: {{ daily_labels|safe }},
+            data: {{ daily_data|safe }},
+            label: "Today's Focus "
+        },
+        weekly: {
+            labels: {{ weekly_labels|safe }},
+            data: {{ weekly_data|safe }},
+            label: "Weekly Focus by Day"
+        },
+        monthly: {
+            labels: {{ monthly_labels|safe }},
+            data: {{ monthly_data|safe }},
+            label: "Daily Focus This Month"
+        }
+    };
+
+    function formatTime(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
     }
-};
 
     function loadChart(type) {
         const ctx = document.getElementById('dynamicChart').getContext('2d');
@@ -84,10 +92,24 @@
                 responsive: true,
                 plugins: {
                     legend: { position: 'top' },
-                    title: { display: true, text: chartData[type].label }
+                    title: { display: true, text: chartData[type].label },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatTime(context.parsed.y);
+                            }
+                        }
+                    }
                 },
                 scales: {
-                    y: { beginAtZero: true }
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatTime(value);
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -97,4 +119,5 @@
         loadChart('weekly');
     });
 </script>
+
 {% endblock %}

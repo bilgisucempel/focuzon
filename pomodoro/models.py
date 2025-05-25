@@ -6,7 +6,7 @@ from django.conf import settings
 
 class PomodoroSession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
     duration = models.DurationField(null=True, blank=True)  # Geçen süre burada saklanıyor
     is_completed = models.BooleanField(default=False)

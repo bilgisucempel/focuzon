@@ -4,63 +4,91 @@
 {% block content %}
     <div class="min-h-screen grid place-items-center px-4 py-12">
 
-  <!-- Glass card ---------------------------------------------------- -->
-  <div class="w-full max-w-xl rounded-2xl bg-white/20 dark:bg-white/5
-              backdrop-blur-md ring-2 ring-purple-400/60 overflow-hidden">
-
-
-    <!-- TOP TABS: Weekly / Monthly ---------------------------------- -->
-    <div class="flex">
-      <button class="layer-btn flex-1 py-3 font-semibold text-white
-                     active-layer bg-purple-500 hover:bg-purple-600">
-        Weekly
-      </button>
-      <button class="layer-btn flex-1 py-3 font-semibold text-white
-                     bg-purple-400 hover:bg-purple-500">
-        Monthly
-      </button>
+    <!-- Stats Overview -->
+    <div class="w-full max-w-xl grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white/20 dark:bg-white/5 rounded-xl backdrop-blur-md p-6 ring-2 ring-purple-400/60">
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Your Rank</h3>
+                <p class="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    #{{ user_rank|default:"--" }}
+                </p>
+            </div>
+        </div>
+        <div class="bg-white/20 dark:bg-white/5 rounded-xl backdrop-blur-md p-6 ring-2 ring-purple-400/60">
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Focus Time</h3>
+                <p class="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    {{ total_focus_time|default:"0h" }}
+                </p>
+            </div>
+        </div>
+        <div class="bg-white/20 dark:bg-white/5 rounded-xl backdrop-blur-md p-6 ring-2 ring-purple-400/60">
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Achievement</h3>
+                <p class="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    {{ achievement_count|default:"0" }}
+                </p>
+            </div>
+        </div>
     </div>
 
-    <!-- LAYER: WEEKLY ------------------------------------------------ -->
-    <section class="layer p-6 space-y-6 animate-fade-in">
+    <!-- Glass card ---------------------------------------------------- -->
+    <div class="w-full max-w-xl rounded-2xl bg-white/20 dark:bg-white/5
+                backdrop-blur-md ring-2 ring-purple-400/60 overflow-hidden">
 
-      <!-- inner tabs -->
-      <div class="flex border-b border-purple-300/40">
-        <button class="board-btn flex-1 py-2 font-semibold
-                       active-board text-purple-600 dark:text-purple-300">
-          Friends
-        </button>
-        <button class="board-btn flex-1 py-2 font-semibold">Global</button>
-      </div>
 
-      <ul class="board space-y-5">
-        {% include "leaderboard/_rows.html" with dataset=weekly_friends %}
-      </ul>
-      <ul class="board space-y-5 hidden">
-        {% include "leaderboard/_rows.html" with dataset=weekly_global %}
-      </ul>
-    </section>
+        <!-- TOP TABS: Weekly / Monthly ---------------------------------- -->
+        <div class="flex">
+            <button class="layer-btn flex-1 py-3 font-semibold text-white
+                        active-layer bg-purple-500 hover:bg-purple-600">
+                Weekly
+            </button>
+            <button class="layer-btn flex-1 py-3 font-semibold text-white
+                        bg-purple-400 hover:bg-purple-500">
+                Monthly
+            </button>
+        </div>
 
-    <!-- LAYER: MONTHLY ---------------------------------------------- -->
-    <section class="layer p-6 space-y-6 hidden">
+        <!-- LAYER: WEEKLY ------------------------------------------------ -->
+        <section class="layer p-6 space-y-6 animate-fade-in">
 
-      <div class="flex border-b border-purple-300/40">
-        <button class="board-btn flex-1 py-2 font-semibold
-                       active-board text-purple-600 dark:text-purple-300">
-          Friends
-        </button>
-        <button class="board-btn flex-1 py-2 font-semibold">Global</button>
-      </div>
+            <!-- inner tabs -->
+            <div class="flex border-b border-purple-300/40">
+                <button class="board-btn flex-1 py-2 font-semibold
+                            active-board text-purple-600 dark:text-purple-300">
+                    Friends
+                </button>
+                <button class="board-btn flex-1 py-2 font-semibold">Global</button>
+            </div>
 
-      <ul class="board space-y-5">
-        {% include "leaderboard/_rows.html" with dataset=monthly_friends %}
-      </ul>
-      <ul class="board space-y-5 hidden">
-        {% include "leaderboard/_rows.html" with dataset=monthly_global %}
-      </ul>
-    </section>
+            <ul class="board space-y-5">
+                {% include "leaderboard/_rows.html" with dataset=weekly_friends %}
+            </ul>
+            <ul class="board space-y-5 hidden">
+                {% include "leaderboard/_rows.html" with dataset=weekly_global %}
+            </ul>
+        </section>
 
-  </div>
+        <!-- LAYER: MONTHLY ---------------------------------------------- -->
+        <section class="layer p-6 space-y-6 hidden">
+
+            <div class="flex border-b border-purple-300/40">
+                <button class="board-btn flex-1 py-2 font-semibold
+                            active-board text-purple-600 dark:text-purple-300">
+                    Friends
+                </button>
+                <button class="board-btn flex-1 py-2 font-semibold">Global</button>
+            </div>
+
+            <ul class="board space-y-5">
+                {% include "leaderboard/_rows.html" with dataset=monthly_friends %}
+            </ul>
+            <ul class="board space-y-5 hidden">
+                {% include "leaderboard/_rows.html" with dataset=monthly_global %}
+            </ul>
+        </section>
+
+    </div>
 </div>
 
 <!-- tiny css helpers ----------------------------------------------- -->
@@ -75,6 +103,7 @@
   border:2px solid #c4b5fd
 }
 </style>
+
 
 <!-- LIVELY but 12-line JS :) --------------------------------------- -->
 <script>
