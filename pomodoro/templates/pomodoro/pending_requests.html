@@ -51,13 +51,21 @@
     <h2 class="request-title">📄 Gelen Arkadaşlık İstekleri</h2>
 
     {% if requests %}
-        <ul class="request-list">
-            {% for request in requests %}
-                <li class="request-item">{{ request.sender.username }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="no-requests">Hiç bekleyen isteğin yok 😢</p>
-    {% endif %}
-</div>
+    <ul class="request-list">
+        {% for request in requests %}
+            <li class="request-item">
+                {{ request.from_user.username }} sana arkadaşlık isteği gönderdi 💌
+                <form method="post" action="{% url 'accept_request' request.id %}" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: #4ade80; border: none; color: white; padding: 6px 12px; border-radius: 8px; font-weight: 500; cursor: pointer;">
+                        ✔️ Kabul Et
+                    </button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="no-requests">Hiç bekleyen isteğin yok 😢</p>
+{% endif %}
+
 {% endblock %}

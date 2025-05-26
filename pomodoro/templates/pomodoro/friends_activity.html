@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto p-8 text-white">
+    <h2 class="text-3xl font-bold mb-6 text-center">👀 Arkadaşların Bugünkü Aktivitesi</h2>
+
+    {% if friend_stats %}
+        <table class="w-full text-left border-separate border-spacing-y-4">
+            <thead>
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Bugün Çalışma</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in friend_stats %}
+                    <tr class="bg-white/10 backdrop-blur p-4 rounded-lg shadow">
+                        <td class="py-3 px-4 font-semibold">{{ f.username }}</td>
+                        <td class="py-3 px-4">{{ f.total_today }} dk</td>
+                        <td class="py-3 px-4">
+                            {% if f.is_active %}
+                                <span class="text-green-400 animate-pulse">🟢 Çalışıyor</span>
+
+                            {% else %}
+                                <span class="text-gray-400">😴 Müsait</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center text-gray-300">Henüz arkadaşın yok 😢</p>
+    {% endif %}
+</div>
+{% endblock %}

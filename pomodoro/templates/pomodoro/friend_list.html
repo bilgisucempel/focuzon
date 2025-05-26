@@ -64,14 +64,34 @@
         margin-top: 30px;
         opacity: 0.8;
     }
+    .add-friend-btn {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    background-color: #38bdf8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.add-friend-btn:hover {
+    background-color: #0ea5e9;
+    transform: scale(1.05);
+}
+
 </style>
 
 <div class="friend-page-container">
     <h2 class="friend-title">👥 Arkadaşların</h2>
+    <a href="{% url 'user_list' %}" class="add-friend-btn">➕ Yeni Arkadaş Ekle</a>
+
 
     {% if friends %}
         <div class="friend-container">
             {% for friend in friends %}
+
                 <div class="friend-card">
                     <img src="https://via.placeholder.com/100" alt="Profil Resmi" class="profile-pic">
                     <p>{{ friend.username }}</p>
@@ -82,4 +102,4 @@
         <p class="no-friends">Hiç arkadaşın yok 😢 Hadi yeni arkadaşlar ekle!</p>
     {% endif %}
 </div>
-{% endblock %}
+{% endblock %} 
