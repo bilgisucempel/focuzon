@@ -699,6 +699,10 @@ video {
   margin-top: 1.5rem;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
 .block {
   display: block;
 }
@@ -793,6 +797,10 @@ video {
 
 .max-w-xl {
   max-width: 36rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
 }
 
 .flex-1 {
@@ -908,6 +916,12 @@ video {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1020,6 +1034,11 @@ video {
   background-color: rgb(255 255 255 / 0.8);
 }
 
+.bg-cyan-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 211 238 / var(--tw-bg-opacity));
+}
+
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -1123,6 +1142,16 @@ video {
   padding-bottom: 1rem;
 }
 
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
 .pt-\[140px\] {
   padding-top: 140px;
 }
@@ -1188,6 +1217,10 @@ video {
 
 .font-semibold {
   font-weight: 600;
+}
+
+.italic {
+  font-style: italic;
 }
 
 .tracking-tight {
@@ -1266,6 +1299,35 @@ video {
 .text-zinc-900 {
   --tw-text-opacity: 1;
   color: rgb(24 24 27 / var(--tw-text-opacity));
+}
+
+.text-white\/70 {
+  color: rgb(255 255 255 / 0.7);
+}
+
+.text-yellow-300 {
+  --tw-text-opacity: 1;
+  color: rgb(253 224 71 / var(--tw-text-opacity));
+}
+
+.text-white\/60 {
+  color: rgb(255 255 255 / 0.6);
+}
+
+.placeholder-white\/50::-moz-placeholder {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.placeholder-white\/50::placeholder {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.placeholder-white\/60::-moz-placeholder {
+  color: rgb(255 255 255 / 0.6);
+}
+
+.placeholder-white\/60::placeholder {
+  color: rgb(255 255 255 / 0.6);
 }
 
 .opacity-80 {
@@ -1364,6 +1426,12 @@ video {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.hover\:scale-105:hover {
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .hover\:bg-blue-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
@@ -1391,6 +1459,11 @@ video {
 
 .hover\:bg-white\/40:hover {
   background-color: rgb(255 255 255 / 0.4);
+}
+
+.hover\:bg-cyan-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(6 182 212 / var(--tw-bg-opacity));
 }
 
 .hover\:from-purple-500:hover {
@@ -1446,6 +1519,11 @@ video {
 .focus\:ring-purple-400:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(192 132 252 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-cyan-400:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(34 211 238 / var(--tw-ring-opacity));
 }
 
 @media (min-width: 768px) {
