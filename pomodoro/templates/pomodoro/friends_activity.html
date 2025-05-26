@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="max-w-3xl mx-auto p-8 text-white">
-    <h2 class="text-3xl font-bold mb-6 text-center">👀 Arkadaşların Bugünkü Aktivitesi</h2>
+    <h2 class="text-3xl font-bold mb-6 text-center">👀 Your Friends' Activity Today</h2>
 
     {% if friend_stats %}
         <table class="w-full text-left border-separate border-spacing-y-4">
             <thead>
                 <tr>
-                    <th>Kullanıcı</th>
-                    <th>Bugün Çalışma</th>
-                    <th>Durum</th>
+                    <th>User</th>
+                    <th>Today's activity</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,10 +19,10 @@
                         <td class="py-3 px-4">{{ f.total_today }} dk</td>
                         <td class="py-3 px-4">
                             {% if f.is_active %}
-                                <span class="text-green-400 animate-pulse">🟢 Çalışıyor</span>
+                                <span class="text-green-400 animate-pulse">🟢 FOCUZING</span>
 
                             {% else %}
-                                <span class="text-gray-400">😴 Müsait</span>
+                                <span class="text-gray-400">😴 Avaliable</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -30,7 +30,7 @@
             </tbody>
         </table>
     {% else %}
-        <p class="text-center text-gray-300">Henüz arkadaşın yok 😢</p>
+        <p class="text-center text-gray-300">You don't have any friends yet. 😢</p>
     {% endif %}
 </div>
 {% endblock %}

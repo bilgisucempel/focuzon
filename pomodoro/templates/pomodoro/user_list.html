@@ -1,45 +1,96 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="max-w-2xl mx-auto mt-16 p-6 rounded-2xl bg-white/10 backdrop-blur-md text-white shadow-xl">
-    <h2 class="text-3xl font-bold text-center mb-6">🔍 Users</h2>
+{% load static %}
+{% block body_class %}default-page{% endblock %}
 
-    <form method="get">
-        <input
-            type="text"
-            name="q"
-            placeholder="Search by username..."
-            value="{{ request.GET.q }}"
-            class="w-full px-4 py-2 mb-6 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-        >
+{% block content %}
+<style>
+    .user-page-container {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 40px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        backdrop-filter: blur(12px);
+        color: white;
+    }
+
+    .user-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .search-form input {
+        width: 100%;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: 1px solid white;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        margin-bottom: 20px;
+        backdrop-filter: blur(6px);
+    }
+
+    .user-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(135, 75, 233, 0.2);
+    }
+
+    .user-name {
+        font-size: 18px;
+    }
+
+    .add-btn {
+        background: #38bdf8;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .add-btn:hover {
+        background: #0ea5e9;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="user-page-container">
+    <h2 class="user-title">🔍 Kullanıcılar</h2>
+
+    <form method="get" class="search-form">
+        <input type="text" name="q" placeholder="Kullanıcı adıyla ara..." value="{{ request.GET.q }}">
     </form>
 
-    {% if request.GET.q %}
-        {% if users %}
-            <div class="space-y-3">
-                {% for user in users %}
-                    <div class="flex items-center justify-between px-4 py-3 rounded-xl bg-white/10 shadow-md">
-                        <span>{{ user.username }}</span>
+    {% if users %}
+    {% for user in users %}
+        <div class="user-card">
+            <span class="user-name">{{ user.username }}</span>
 
-                        {% if user.id in friend_user_ids %}
-                            <span class="text-green-400 font-semibold">✔️ Friends</span>
-                        {% elif user.id in sent_user_ids %}
-                            <span class="text-yellow-300 font-semibold">📨 Request Sent</span>
-                        {% else %}
-                            <form method="post" action="{% url 'send_friend_request' user.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="text-sm bg-cyan-400 hover:bg-cyan-500 text-white px-3 py-1 rounded-md">
-                                    ➕ Add
-                                </button>
-                            </form>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-center text-white/70">No users found 😢</p>
-        {% endif %}
-    {% else %}
-        <p class="text-center text-white/60 italic">Type a username to search...</p>
-    {% endif %}
-</div>
+            {% if user.id in friend_user_ids %}
+                <span style="color: #22c55e; font-weight: 600;">✔️ Arkadaşsınız</span>
+
+            {% elif user.id in sent_user_ids %}
+                <span style="color: #facc15; font-weight: 600;">📨 İstek Gönderildi</span>
+
+            {% else %}
+                <form method="post" action="{% url 'send_friend_request' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="add-btn">➕ Ekle</button>
+                </form>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-center opacity-80">Hiç kullanıcı bulunamadı 😢</p>
+{% endif %}
 {% endblock %}

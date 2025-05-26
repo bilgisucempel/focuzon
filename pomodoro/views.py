@@ -19,7 +19,7 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import PomodoroSession
-from .utils import get_total_duration, format_duration  # varsa
+from .utils import get_total_duration, format_duration  
 
 
 # ---------------------------
@@ -57,6 +57,8 @@ def start_pomodoro(request):
 
     # GET isteği için sayfa render
     past_sessions = PomodoroSession.objects.filter(user=request.user, is_completed=True).order_by("-start_time")
+    
+
     active_session = PomodoroSession.objects.filter(user=request.user, is_completed=False).first()
 
     return render(request, "pomodoro/start_pomodoro.html", {
@@ -113,7 +115,7 @@ def complete_pomodoro(request, session_id):
 
         now_time = now()
         session.end_time = now_time
-        session.duration = timedelta(seconds=elapsed_seconds)  # 👈 Gerçek geçen süre
+        session.duration = timedelta(seconds=elapsed_seconds) 
         session.is_completed = True
         session.save()
 
@@ -174,7 +176,7 @@ def dashboard(request):
     ).annotate(hour=TruncHour('start_time')) \
      .values('hour') \
      .annotate(total=Sum('duration'))
-    # ✅ Session sayıları (adet)
+    # Session sayıları (adet)
     daily_count = PomodoroSession.objects.filter(
         user=request.user,
         is_completed=True,
@@ -236,7 +238,7 @@ def dashboard(request):
         'monthly_labels': json.dumps(monthly_labels),
         'monthly_data': json.dumps(monthly_data),
 
-        'weekly_total_minutes': sum(weekly_data),  # bu raw total kalsın chart için
+        'weekly_total_minutes': sum(weekly_data),  
         'daily_total': format_duration(sum(daily_data)),
         'weekly_total': format_duration(sum(weekly_data)),
         'monthly_total': format_duration(sum(monthly_data)),
