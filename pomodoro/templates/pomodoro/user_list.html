@@ -65,11 +65,12 @@
 </style>
 
 <div class="user-page-container">
-    <h2 class="user-title">🔍 Kullanıcılar</h2>
+    <h2 class="user-title">🔍 Users</h2>
 
     <form method="get" class="search-form">
-        <input type="text" name="q" placeholder="Kullanıcı adıyla ara..." value="{{ request.GET.q }}">
-    </form>
+      <input type="text" name="q" placeholder="Search by username..." value="{{ request.GET.q }}">
+  </form>
+  
 
     {% if users %}
     {% for user in users %}
@@ -77,20 +78,20 @@
             <span class="user-name">{{ user.username }}</span>
 
             {% if user.id in friend_user_ids %}
-                <span style="color: #22c55e; font-weight: 600;">✔️ Arkadaşsınız</span>
+                <span style="color: #22c55e; font-weight: 600;">✔️ You are friends</span>
 
             {% elif user.id in sent_user_ids %}
-                <span style="color: #facc15; font-weight: 600;">📨 İstek Gönderildi</span>
+                <span style="color: #facc15; font-weight: 600;">📨 Request Sent</span>
 
             {% else %}
                 <form method="post" action="{% url 'send_friend_request' user.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="add-btn">➕ Ekle</button>
+                    <button type="submit" class="add-btn">➕ add</button>
                 </form>
             {% endif %}
         </div>
     {% endfor %}
 {% else %}
-    <p class="text-center opacity-80">Hiç kullanıcı bulunamadı 😢</p>
+    <p class="text-center opacity-80">No users found 😢</p>
 {% endif %}
 {% endblock %}

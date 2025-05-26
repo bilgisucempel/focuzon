@@ -48,7 +48,7 @@
 </style>
 
 <div class="requests-page-container">
-    <h2 class="request-title">📄 Gelen Arkadaşlık İstekleri</h2>
+    <h2 class="request-title">📄 Incoming Friend Requests</h2>
 
     {% if requests %}
     <ul class="request-list">
@@ -65,7 +65,7 @@
         {% endfor %}
     </ul>
 {% else %}
-    <p class="no-requests">Hiç bekleyen isteğin yok 😢</p>
+    <p class="no-requests">You have no pending requests. 😢</p>
 {% endif %}
 
 {% endblock %}

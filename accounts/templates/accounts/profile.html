@@ -13,16 +13,16 @@
 
     <h2>{{ user.username }}</h2>
     <p><i class="fa fa-envelope"></i> {{ user.email }}</p>
-    <p><span style="color: limegreen;">🟢</span> Çevrimiçi</p>
+    <p><span style="color: limegreen;">🟢</span> Online</p>
 
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form.as_p }}  <!-- CustomUserForm veya ProfileForm buraya düzgün şekilde yansır -->
-      <button type="submit" class="btn btn-primary mt-3">✨ Profil Resmini Güncelle</button>
+      <button type="submit" class="btn btn-primary mt-3">✨ Edit your profile picture</button>
     </form>
 
     <br>
-    <a href="{% url 'logout' %}" class="btn btn-logout">🚪 Çıkış Yap</a>
+    <a href="{% url 'logout' %}" class="btn btn-logout">🚪 Logout</a>
 
   </div>
 </div>

@@ -68,6 +68,9 @@
     <ul class="space-y-1">
       {% for session in past_sessions %}
       <li>✅ {{ session.start_time|date:"d M Y H:i" }} – {{ session.duration }} ({{ session.formatted_duration }})</li>
+
+      
+      
       {% empty %}
       <li>No previous sessions yet.</li>
       {% endfor %}
@@ -224,7 +227,7 @@ document.getElementById("completeBtn")?.addEventListener("click", function () {
         return;
     }
 
-    // Gerçek süre hesapla (fallback olarak elapsedTime)
+    // Gerçek süre hesapla 
     let actualElapsed = elapsedTime;
     if (startTimestamp) {
         actualElapsed = Math.floor((Date.now() - startTimestamp) / 1000);
@@ -262,7 +265,7 @@ document.getElementById("clearSessions").addEventListener("click", function() {
         .then(data => {
             if (data.status === "success") {
                 alert("Geçmiş oturumlar başarıyla silindi.");
-                window.location.reload();  // Sayfayı yenileyerek değişiklikleri gösteriyoruz
+                window.location.reload();  
             } else {
                 alert("Bir hata oluştu. Lütfen tekrar deneyin.");
             }
