@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Task
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 @login_required
 def task_list(request):
@@ -26,3 +28,15 @@ def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
     task.delete()
     return redirect('task_list')
+
+
+@require_POST
+def update_note(request, task_id):
+    try:
+        task = Task.objects.get(id=task_id)
+        note = request.POST.get("note", "").strip()
+        task.note = note
+        task.save()
+        return JsonResponse({"status": "success", "note": task.note})
+    except Task.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Task not found"}, status=404)

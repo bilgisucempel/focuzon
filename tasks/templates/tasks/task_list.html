@@ -4,17 +4,15 @@
 {% block content %}
 <div class="w-full max-w-[1600px] mx-auto px-8 mt-12 flex flex-wrap justify-center gap-8">
 
-  <!-- Görevler -->
+  <!-- Task Section -->
   <div class="w-[700px] bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 flex flex-col">
-
     <h2 class="text-3xl font-bold text-white mb-6">My Tasks</h2>
 
     <!-- Add Task Form -->
     <form method="POST" class="flex items-center gap-3 mb-6">
       {% csrf_token %}
       <input name="title" type="text" placeholder="Enter a task..."
-        class="flex-1 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
-        required>
+        class="flex-1 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500" required>
       <input name="due_date" type="date"
         class="px-3 py-2 rounded-lg bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
       <button type="submit"
@@ -26,7 +24,14 @@
     <!-- Task List -->
     <ul class="space-y-3 overflow-y-auto pr-1">
       {% for task in tasks %}
-      <li class="flex items-center justify-between p-3 rounded-lg bg-zinc-800 hover:shadow-md transition">
+      <li onclick="openModal(
+        '{{ task.title|escapejs }}',
+        '{{ task.due_date|date:"Y-m-d" }}',
+        {{ task.is_completed|yesno:"true,false" }},
+        '{{ task.note|default_if_none:""|escapejs }}',
+        {{ task.id }}
+      )" class="cursor-pointer flex items-center justify-between p-3 rounded-lg bg-zinc-800 hover:shadow-md transition">
+
         <div class="flex items-center gap-3">
           <form method="POST" action="{% url 'toggle_task' task.id %}">
             {% csrf_token %}
@@ -34,8 +39,9 @@
               class="w-5 h-5 accent-violet-500">
           </form>
           <div class="flex flex-col">
-            <span
-              class="{% if task.is_completed %}line-through text-zinc-400{% else %}text-white{% endif %}">{{ task.title }}</span>
+            <span class="{% if task.is_completed %}line-through text-zinc-400{% else %}text-white{% endif %}">
+              {{ task.title }}
+            </span>
             {% if task.due_date %}
             <span class="text-sm text-red-400">Due: {{ task.due_date|date:"j M" }}</span>
             {% endif %}
@@ -52,19 +58,39 @@
     </ul>
   </div>
 
-  <!-- Takvim -->
+  <!-- Calendar Section -->
   <div class="w-[700px] bg-white/30 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 text-black dark:text-white p-6 flex flex-col">
-    <h2 class="text-2xl font-semibold mb-4 text-center">Task Calendar 📅</h2>
+    <h2 class="text-2xl font-semibold mb-4 text-center">Task Calendar 🗓️</h2>
     <div id="calendar" class="flex-grow w-full min-h-[600px]"></div>
   </div>
 
 </div>
-{% endblock %}
 
+<!-- Modal -->
+<div id="task-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-xl shadow-xl p-6 w-[90%] max-w-md">
+    <h3 class="text-xl font-semibold mb-2" id="modal-title">Task Title</h3>
+    <p class="text-sm mb-1" id="modal-date">🗓️ Due: </p>
+    <p class="text-sm mb-1" id="modal-status">⏳ Status: </p>
+
+    <label for="note-textarea" class="block mt-4 mb-1 text-sm font-medium">📝 Your Note:</label>
+    <textarea id="note-textarea" placeholder="Write a note about this task..."
+      class="w-full px-3 py-2 rounded bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+      rows="3"></textarea>
+
+    <div class="flex justify-end gap-3 mt-4">
+      <button onclick="saveNote()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg">Save Note</button>
+      <button onclick="closeModal()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
 <script>
+  let currentTaskId = null;
+
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -89,5 +115,41 @@
     });
     calendar.render();
   });
+
+  function openModal(title, date, isDone, note, taskId) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-date').innerText = "🗓️ Due: " + date;
+    document.getElementById('modal-status').innerText = isDone ? "✅ Completed" : "⏳ Not completed";
+    document.getElementById('note-textarea').value = note || '';
+    currentTaskId = taskId;
+    document.getElementById('task-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    currentTaskId = null;
+    document.getElementById('task-modal').classList.add('hidden');
+  }
+
+  function saveNote() {
+    const noteContent = document.getElementById('note-textarea').value;
+    fetch(`/tasks/update-note/${currentTaskId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `note=${encodeURIComponent(noteContent)}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("✅ Note saved!");
+          closeModal();
+          location.reload();
+        } else {
+          alert("❌ Failed to save note.");
+        }
+      });
+  }
 </script>
 {% endblock %}
