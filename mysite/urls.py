@@ -27,6 +27,7 @@ urlpatterns = [
     path('', home, name='home'),
     path("pomodoro/", include("pomodoro.urls")),
     path('leaderboard/', include('leaderboard.urls')),
+   path('tasks/', include('tasks.urls')),
     # Pomodoro işlemlerini yönlendir
 
 ] # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

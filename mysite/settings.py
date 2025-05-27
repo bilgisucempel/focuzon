@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "pomodoro",
-    "leaderboard"
+    "leaderboard",
+    "tasks"
 ]
 
 MIDDLEWARE = [
