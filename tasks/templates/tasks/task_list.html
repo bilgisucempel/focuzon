@@ -1,46 +1,91 @@
-
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
-<div class="max-w-xl mx-auto mt-12 p-6 bg-zinc-900 rounded-xl shadow-lg">
+<div class="max-w-7xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-5 gap-8">
+
+  <!-- Görevler -->
+  <div class="col-span-5 md:col-span-2 bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6">
     <h2 class="text-3xl font-bold text-white mb-6">My Tasks</h2>
 
     <!-- Add Task Form -->
     <form method="POST" class="flex items-center gap-3 mb-6">
-        {% csrf_token %}
-        <input name="title" type="text" placeholder="Enter a task..." class="flex-1 px-4 py-2 rounded-md bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500" required>
-        <input name="due_date" type="date" class="px-3 py-2 rounded-md bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
-        <button type="submit" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-md">Add</button>
+      {% csrf_token %}
+      <input name="title" type="text" placeholder="Enter a task..."
+        class="flex-1 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+        required>
+      <input name="due_date" type="date"
+        class="px-3 py-2 rounded-lg bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <button type="submit"
+        class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition shadow">
+        Add
+      </button>
     </form>
 
-
-<!-- Task List -->
-<ul class="space-y-3">
-    {% for task in tasks %}
-    <li class="flex items-center justify-between p-3 rounded-md bg-zinc-800">
+    <!-- Task List -->
+    <ul class="space-y-3">
+      {% for task in tasks %}
+      <li class="flex items-center justify-between p-3 rounded-lg bg-zinc-800 hover:shadow-md transition">
         <div class="flex items-center gap-3">
-            <form method="POST" action="{% url 'toggle_task' task.id %}">
-                {% csrf_token %}
-                <input type="checkbox" onchange="this.form.submit()" {% if task.is_completed %}checked{% endif %} class="w-5 h-5 accent-violet-500">
-            </form>
-            <div class="flex flex-col">
-                <span class="{% if task.is_completed %}line-through text-zinc-400{% else %}text-white{% endif %}">{{ task.title }}</span>
-                {% if task.due_date %}
-                <span class="text-sm text-red-400">Due: {{ task.due_date|date:"j M" }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Delete Button -->
-        <form method="POST" action="{% url 'delete_task' task.id %}">
+          <form method="POST" action="{% url 'toggle_task' task.id %}">
             {% csrf_token %}
-            <button type="submit" class="text-red-500 hover:text-red-600 transition">
-                <i class="bi bi-trash3-fill text-xl"></i>
-            </button>
+            <input type="checkbox" onchange="this.form.submit()" {% if task.is_completed %}checked{% endif %}
+              class="w-5 h-5 accent-violet-500">
+          </form>
+          <div class="flex flex-col">
+            <span
+              class="{% if task.is_completed %}line-through text-zinc-400{% else %}text-white{% endif %}">{{ task.title }}</span>
+            {% if task.due_date %}
+            <span class="text-sm text-red-400">Due: {{ task.due_date|date:"j M" }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <form method="POST" action="{% url 'delete_task' task.id %}">
+          {% csrf_token %}
+          <button type="submit" class="text-red-500 hover:text-red-600 transition">
+            <i class="bi bi-trash3-fill text-xl"></i>
+          </button>
         </form>
-    </li>
-    {% endfor %}
-</ul>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Takvim -->
+  <div class="col-span-5 md:col-span-3 bg-white/30 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 text-black dark:text-white p-6">
+    <h2 class="text-2xl font-semibold mb-4 text-center">Task Calendar 📅</h2>
+    <div id="calendar"></div>
+  </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      aspectRatio: 1.8,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,listWeek'
+      },
+      events: [
+        {% for task in tasks %}
+        {% if task.due_date %}
+        {
+          title: "{{ task.title|escapejs }}",
+          start: "{{ task.due_date|date:'Y-m-d' }}",
+          color: "{% if task.is_completed %}#22c55e{% else %}#8b5cf6{% endif %}"
+        },
+        {% endif %}
+        {% endfor %}
+      ]
+    });
+    calendar.render();
+  });
+</script>
 {% endblock %}
