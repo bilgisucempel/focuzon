@@ -2,6 +2,22 @@
 {% load static %}
 
 {% block content %}
+
+    <style>
+  .custom-flatpickr {
+    background-color: #1e1e2f !important;
+    border: 1px solid #8b5cf6 !important;
+    color: white !important;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+  }
+
+  .custom-flatpickr::placeholder {
+    color: #bbb !important;
+  }
+</style>
+
 <div class="w-full max-w-[1600px] mx-auto px-8 mt-12 flex flex-wrap justify-center gap-8">
 
   <!-- Task Section -->
@@ -13,8 +29,11 @@
       {% csrf_token %}
       <input name="title" type="text" placeholder="Enter a task..."
         class="flex-1 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500" required>
-      <input name="due_date" type="date"
-        class="px-3 py-2 rounded-lg bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+     <input name="due_date" type="date"
+  placeholder="Select due date"
+  class="date-picker px-3 py-2 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500">
+
+
       <button type="submit"
         class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition shadow">
         Add
@@ -88,10 +107,12 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+
 <script>
   let currentTaskId = null;
 
   document.addEventListener('DOMContentLoaded', function () {
+    // 📅 Takvim (FullCalendar)
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -114,8 +135,17 @@
       ]
     });
     calendar.render();
+
+    // 📆 Flatpickr Tarih Seçici
+    flatpickr("input[type='date']", {
+      altInput: true,
+      altFormat: "F j, Y",
+      dateFormat: "Y-m-d",
+      minDate: "today",
+    });
   });
 
+  // 🎯 Modal Aç
   function openModal(title, date, isDone, note, taskId) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-date').innerText = "🗓️ Due: " + date;
@@ -125,11 +155,13 @@
     document.getElementById('task-modal').classList.remove('hidden');
   }
 
+  // ❌ Modal Kapat
   function closeModal() {
     currentTaskId = null;
     document.getElementById('task-modal').classList.add('hidden');
   }
 
+  // 💾 Notu Kaydet
   function saveNote() {
     const noteContent = document.getElementById('note-textarea').value;
     fetch(`/tasks/update-note/${currentTaskId}/`, {
@@ -140,16 +172,16 @@
       },
       body: `note=${encodeURIComponent(noteContent)}`
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") {
-          alert("✅ Note saved!");
-          closeModal();
-          location.reload();
-        } else {
-          alert("❌ Failed to save note.");
-        }
-      });
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        alert("✅ Note saved!");
+        closeModal();
+        location.reload();
+      } else {
+        alert("❌ Failed to save note.");
+      }
+    });
   }
 </script>
 {% endblock %}
