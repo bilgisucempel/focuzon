@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "accounts",
     "pomodoro",
     "leaderboard",
-    "tasks"
+    "tasks",
+    "notes"
 ]
 
 MIDDLEWARE = [

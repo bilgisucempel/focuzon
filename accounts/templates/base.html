@@ -14,6 +14,11 @@
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Focuzon{% endblock %}</title>
@@ -53,6 +58,11 @@
   <a href="{% url 'leaderboard' %}"
      class="text-sm font-medium text-gray-700 dark:text-white hover:text-violet-500 transition">
      Leaderboard
+  </a>
+
+  <a href="{% url 'notes:note_list' %}"
+     class="text-sm font-medium {% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% else %}text-gray-700 dark:text-white hover:text-violet-500{% endif %} transition">
+     My Notes
   </a>
 
   <a href="{% url 'task_list' %}"
