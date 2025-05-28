@@ -3,6 +3,8 @@ from .models import Note
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
+
+
 @login_required
 def note_list(request):
     notes = Note.objects.filter(user=request.user)
@@ -27,6 +29,11 @@ def update_note(request, note_id):
         note.content = request.POST.get('content')
         note.save()
         return JsonResponse({"status": "saved"})
-from django.shortcuts import render
 
-# Create your views here.
+
+def delete_note(request, pk):
+    note = get_object_or_404(Note, pk=pk)
+    if request.method == 'POST':
+        note.delete()
+        return redirect('notes:note_list')  # düzeltildi
+    return redirect('notes:note_list')
