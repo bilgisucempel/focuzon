@@ -44,65 +44,68 @@
 
     <!-- NAVBAR -->
 
-    <nav class="fixed top-0 w-full h-[120px] backdrop-blur-md bg-white/60 dark:bg-gray-800/50 border-b border-white/20 dark:border-gray-600/40 z-50 px-6 flex items-center justify-between">
+    <nav class="fixed top-0 w-full h-[120px] backdrop-blur-md bg-white/60 dark:bg-gray-800/50 border-b border-white/20 dark:border-gray-600/40 z-50 px-6 flex items-center">
 
-
-      <a href="{% url 'home' %}" class="flex items-center">
-        <img src="{% static 'images/focuzon_logo_.png' %}" alt="Focuzon" class="h-[130px] focuzon-navbar-logo" />
-      </a>
-
-      <div class="flex items-center gap-4 text-sm md:text-base font-semibold text-gray-700 dark:text-gray-100">
-        {% if user.is_authenticated %}
-
-
-            <div class="flex items-center gap-4">
-  <a href="{% url 'leaderboard' %}"
-     class="text-sm font-medium text-gray-700 dark:text-white hover:text-violet-500 transition">
-     Leaderboard
+  <!-- Sol: Logo -->
+  <a href="{% url 'home' %}" class="flex-shrink-0">
+    <img src="{% static 'images/focuzon_logo_.png' %}" alt="Focuzon" class="h-[130px]" />
   </a>
 
-  <a href="{% url 'notes:note_list' %}"
-     class="text-sm font-medium {% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% else %}text-gray-700 dark:text-white hover:text-violet-500{% endif %} transition">
-     My Notes
-  </a>
+  <!-- Orta: Grid navbar -->
+  {% if user.is_authenticated %}
+    <ul class="flex flex-1 justify-between items-center text-sm md:text-base font-semibold text-gray-700 dark:text-gray-100 text-center space-x-4">
 
-  <a href="{% url 'task_list' %}"
-     class="text-sm font-medium {% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% else %}text-gray-700 dark:text-white hover:text-violet-500{% endif %} transition">
-     My Tasks
-  </a>
+      <li>
+        <a href="{% url 'leaderboard' %}"
+           class="{% if request.resolver_match.url_name == 'leaderboard' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          Leaderboard
+        </a>
+      </li>
 
-  <a href="{% url 'pending_requests' %}"
-     class="text-sm font-medium text-gray-700 dark:text-white hover:text-violet-500 transition">
-     Requests
-  </a>
+      <li>
+        <a href="{% url 'notes:note_list' %}"
+           class="{% if request.resolver_match.url_name == 'note_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          My Notes
+        </a>
+      </li>
 
-  <a href="{% url 'friend_list' %}"
-     class="text-sm font-medium text-gray-700 dark:text-white hover:text-violet-500 transition">
-     Friends
-  </a>
+      <li>
+        <a href="{% url 'task_list' %}"
+           class="{% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          My Tasks
+        </a>
+      </li>
 
-  <a href="/pomodoro/friends/activity/"
-     class="text-sm font-medium text-gray-700 dark:text-white hover:text-violet-500 transition">
-     Activity
-  </a>
+      <li>
+        <a href="{% url 'pending_requests' %}"
+           class="{% if request.resolver_match.url_name == 'pending_requests' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          Requests
+        </a>
+      </li>
 
-  <a href="{% url 'logout' %}"
-     class="text-sm font-medium text-red-500 hover:text-red-600 transition">
-     Logout
-  </a>
-</div>
+      <li>
+        <a href="{% url 'friend_list' %}"
+           class="{% if request.resolver_match.url_name == 'friend_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          Friends
+        </a>
+      </li>
 
-        {% else %}
-          <a href="{% url 'login' %}" class="hover:text-blue-500">Login</a>
-          <a href="{% url 'register' %}" class="hover:text-green-500">Register</a>
-        {% endif %}
+      <li>
+        <a href="/pomodoro/friends/activity/"
+           class="{% if request.path == '/pomodoro/friends/activity/' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          Activity
+        </a>
+      </li>
 
-        <!-- Tema Toggle -->
-        <button id="theme-toggle" onclick="toggleTheme()" class="text-2xl" aria-label="Toggle Theme">
-          <i id="theme-icon" class="bi bi-moon-fill"></i>
-        </button>
-      </div>
-    </nav>
+      <li>
+        <a href="{% url 'logout' %}" class="text-red-500 hover:text-red-600 transition">
+          Logout
+        </a>
+      </li>
+
+    </ul>
+  {% endif %}
+</nav>
 
     <!-- PAGE CONTENT -->
     <main class="flex-1 pt-[140px] z-10 relative px-4 max-w-4xl mx-auto w-full">
