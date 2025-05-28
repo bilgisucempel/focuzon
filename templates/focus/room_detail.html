@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto p-10 rounded-xl bg-white/60 dark:bg-white/5 shadow-xl backdrop-blur text-gray-900 dark:text-white">
+  <h2 class="text-3xl font-bold text-center text-purple-800 dark:text-purple-300 mb-6">
+    👥 {{ room.name }}
+  </h2>
+
+  <div class="mb-8 text-center">
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-white mb-2">🟢 Aktif Katılımcılar</h3>
+    <ul class="space-y-1">
+      {% for participant in participants %}
+        <li class="text-sm text-gray-800 dark:text-gray-300">
+          – {{ participant.user.username }}
+
+          {% if participant.user == request.user and participant.started_at %}
+            <span id="timer" class="ml-2 text-green-600 dark:text-green-400 font-semibold"></span>
+            <script>
+              const startedAt = new Date("{{ participant.started_at|date:'c' }}");
+              setInterval(() => {
+                const now = new Date();
+                const diff = Math.floor((now - startedAt) / 1000); // saniye farkı
+                const minutes = Math.floor(diff / 60);
+                const seconds = diff % 60;
+                document.getElementById("timer").innerText =
+                  `⏱ ${minutes} dk ${seconds < 10 ? '0' : ''}${seconds} sn`;
+              }, 1000);
+            </script>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="text-sm text-gray-500 italic">Henüz kimse yok... İlk sen ol! 💫</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <form method="post" class="text-center space-x-4">
+    {% csrf_token %}
+    {% if user_participant and user_participant.is_active %}
+
+      <input type="hidden" name="action" value="stop">
+      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full text-sm font-medium transition">
+        🔴 Çalışmayı Bitir
+      </button>
+    {% else %}
+      <input type="hidden" name="action" value="start">
+      <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full text-sm font-medium transition">
+        ⏱ Çalışmaya Başla
+      </button>
+    {% endif %}
+  </form>
+  
+
+{% endblock %}
