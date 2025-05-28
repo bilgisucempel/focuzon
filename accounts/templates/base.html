@@ -84,6 +84,11 @@
       </li>
 
       <li>
+        <a href="{% url 'focus:room_list' %}"
+           class="{% if request.resolver_match.url_name == 'focus:room_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
+          Focus Rooms
+        </a>
+      <li>
         <a href="{% url 'friend_list' %}"
            class="{% if request.resolver_match.url_name == 'friend_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
           Friends
