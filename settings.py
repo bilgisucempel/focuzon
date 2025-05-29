@@ -46,7 +46,6 @@ INSTALLED_APPS = [
 ]
 
 
->>>>>>> ef34cf4bddf609ee17cb2badc0fbe2dfe4214c37
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

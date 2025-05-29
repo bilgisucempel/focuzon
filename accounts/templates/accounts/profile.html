@@ -3,134 +3,52 @@
 
 {% block content %}
 <div class="profile-page-container">
-  <div class="profile-card">
+   <div class="profile-card">
 
-    {% if profile.profile_pic %}
-      <img src="{{ profile.profile_pic.url }}" alt="Profil Fotoğrafı" class="profile-photo">
-    {% else %}
-      <img src="{% static 'images/default_user.png' %}" alt="Varsayılan Fotoğraf" class="profile-photo">
-    {% endif %}
+    <div class="flex justify-center mb-4">
+      {% if profile.profile_pic %}
+        <img src="{{ profile.profile_pic.url }}" alt="Profil Fotoğrafı" class="profile-pic">
+      {% else %}
+        <img src="{% static 'images/default_user.png' %}" alt="Varsayılan Fotoğraf" class="profile-pic">
+      {% endif %}
+    </div>
 
-    <h2>{{ user.username }}</h2>
-    <p><i class="fa fa-envelope"></i> {{ user.email }}</p>
-    <p><span style="color: limegreen;">🟢</span> Online</p>
+    <h2 class="username">{{ user.username }}</h2>
+    <p class="email">{{ user.email }}</p>
+    <p class="status-badge">🟢 Online</p>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="mt-6">
       {% csrf_token %}
-      {{ form.as_p }}  <!-- CustomUserForm veya ProfileForm buraya düzgün şekilde yansır -->
-      <button type="submit" class="btn btn-primary mt-3">✨ Edit your profile picture</button>
+      <div class="form-wrapper text-left text-sm space-y-3">
+        {{ form.as_p }}
+      </div>
+      <button type="submit" class="update-btn">✨ Edit your profile picture</button>
     </form>
 
-    <br>
-    <a href="{% url 'logout' %}" class="btn btn-logout">🚪 Logout</a>
+    <a href="{% url 'logout' %}" class="logout-btn mt-6">🚪 Logout</a>
 
   </div>
 </div>
 {% endblock %}
 
-
-
 <style>
-    .profile-card {
-        background: rgba(255, 255, 255, 0.15);
-        background-color: var(--card-bg);
-        color: var(--text-color);
-        backdrop-filter: blur(12px);
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        text-align: center;
-        width: 320px;
-        margin: 30px auto;
-        color: #fff;
-        font-family: 'Poppins', sans-serif;
-    }
+/* Light tema görünürlüğü */
+body[data-theme="light"] .profile-card,
+body[data-theme="light"] .profile-card * {
+  color: #1f2937 !important; /* text-gray-800 */
+}
 
-    .profile-pic {
-        width: 130px;
-        height: 130px;
-        border-radius: 50%;
-        border: 4px solid #c084fc;
-        box-shadow: 0 6px 15px rgba(192, 132, 252, 0.5);
-        transition: transform 0.3s ease;
-    }
+/* Light temada inputların görünür arka planı */
+body[data-theme="light"] .profile-card input,
+body[data-theme="light"] .profile-card textarea,
+body[data-theme="light"] .profile-card select {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  color: #1f2937 !important;
+  border: 1px solid rgba(0,0,0,0.2);
+}
 
-    .profile-pic:hover {
-        transform: scale(1.07);
-    }
-
-    .profile-card h2 {
-        margin-top: 15px;
-        background: linear-gradient(135deg, #a78bfa, #f472b6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 1.8rem;
-    }
-
-    .email {
-        color: #e0e0e0;
-        margin-bottom: 10px;
-    }
-
-    .status-badge {
-        display: inline-block;
-        margin: 10px 0;
-        padding: 6px 12px;
-        background-color: #34d399;
-        color: white;
-        border-radius: 20px;
-        font-size: 0.9rem;
-    }
-
-    .custom-file-upload {
-        display: inline-block;
-        padding: 10px 20px;
-        cursor: pointer;
-        background: linear-gradient(135deg, #a78bfa, #f472b6);
-        color: white;
-        border-radius: 10px;
-        margin-top: 20px;
-        transition: background 0.3s ease;
-    }
-
-    .custom-file-upload:hover {
-        background: linear-gradient(135deg, #c084fc, #f9a8d4);
-    }
-
-    .custom-file-upload input {
-        display: none;
-    }
-
-    .update-btn {
-        display: block;
-        margin: 20px auto 0;
-        background: linear-gradient(135deg, #c084fc, #f9a8d4);
-        border: none;
-        padding: 10px 25px;
-        border-radius: 10px;
-        color: white;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .update-btn:hover {
-        transform: scale(1.05);
-    }
-
-    .logout-btn {
-        display: inline-block;
-        margin-top: 20px;
-        background-color: #ef4444;
-        padding: 10px 20px;
-        border-radius: 10px;
-        color: white;
-        text-decoration: none;
-        transition: background 0.3s ease;
-    }
-
-    .logout-btn:hover {
-        background-color: #dc2626;
-    }
+/* Placeholder'lar da koyu görünsün */
+body[data-theme="light"] .profile-card input::placeholder {
+  color: #4b5563 !important; /* slate-600 */
+}
 </style>
-

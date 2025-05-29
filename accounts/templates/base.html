@@ -43,74 +43,66 @@
   <body class="flex flex-col min-h-screen bg-gradient-to-br from-[#f5f4fa] via-[#e8edff] to-[#dbe6ff] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-white overflow-x-hidden transition-all duration-300 {% block body_class %}{% endblock %} {{ request.resolver_match.url_name }}-page" data-theme="light">
 
     <!-- NAVBAR -->
-
-    <nav class="fixed top-0 w-full h-[120px] backdrop-blur-md bg-white/60 dark:bg-gray-800/50 border-b border-white/20 dark:border-gray-600/40 z-50 px-6 flex items-center">
+      <nav class="fixed top-0 w-full h-[120px] backdrop-blur-md bg-white/60 dark:bg-gray-800/50 border-b border-white/20 dark:border-gray-600/40 z-50 px-6 flex items-center justify-between">
 
   <!-- Sol: Logo -->
   <a href="{% url 'home' %}" class="flex-shrink-0">
     <img src="{% static 'images/focuzon_logo_.png' %}" alt="Focuzon" class="h-[130px]" />
   </a>
 
-  <!-- Orta: Grid navbar -->
   {% if user.is_authenticated %}
-    <ul class="flex flex-1 justify-between items-center text-sm md:text-base font-semibold text-gray-700 dark:text-gray-100 text-center space-x-4">
+    <!-- Sağ: Menü + Tema -->
+    <div class="flex items-center gap-x-10 pr-6">
+      <!-- Menü -->
+      <ul class="flex items-center text-sm md:text-base font-semibold text-gray-700 dark:text-gray-100 tracking-wide">
+        <li>
+          <a href="{% url 'leaderboard' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'leaderboard' %}text-violet-600 dark:text-violet-400{% endif %}">
+            Leaderboard
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'notes:note_list' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'note_list' %}text-violet-600 dark:text-violet-400{% endif %}">
+            My Notes
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'task_list' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% endif %}">
+            My Tasks
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'pending_requests' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'pending_requests' %}text-violet-600 dark:text-violet-400{% endif %}">
+            Requests
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'focus:focus_home' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'focus:room_list' %}text-violet-600 dark:text-violet-400{% endif %}">
+            Focus Rooms
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'friend_list' %}" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.resolver_match.url_name == 'friend_list' %}text-violet-600 dark:text-violet-400{% endif %}">
+            Friends
+          </a>
+        </li>
+        <li>
+          <a href="/pomodoro/friends/activity/" class="px-4 hover:underline underline-offset-4 decoration-violet-500 {% if request.path == '/pomodoro/friends/activity/' %}text-violet-600 dark:text-violet-400{% endif %}">
+            Activity
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}" class="px-4 text-red-500 hover:text-red-600 transition hover:underline underline-offset-4 decoration-red-500">
+            Logout
+          </a>
+        </li>
+      </ul>
 
-      <li>
-        <a href="{% url 'leaderboard' %}"
-           class="{% if request.resolver_match.url_name == 'leaderboard' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          Leaderboard
-        </a>
-      </li>
-
-      <li>
-        <a href="{% url 'notes:note_list' %}"
-           class="{% if request.resolver_match.url_name == 'note_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          My Notes
-        </a>
-      </li>
-
-      <li>
-        <a href="{% url 'task_list' %}"
-           class="{% if request.resolver_match.url_name == 'task_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          My Tasks
-        </a>
-      </li>
-
-      <li>
-        <a href="{% url 'pending_requests' %}"
-           class="{% if request.resolver_match.url_name == 'pending_requests' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          Requests
-        </a>
-      </li>
-
-      <li>
-        <a href="{% url 'focus:room_list' %}"
-           class="{% if request.resolver_match.url_name == 'focus:room_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          Focus Rooms
-        </a>
-      <li>
-        <a href="{% url 'friend_list' %}"
-           class="{% if request.resolver_match.url_name == 'friend_list' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          Friends
-        </a>
-      </li>
-
-      <li>
-        <a href="/pomodoro/friends/activity/"
-           class="{% if request.path == '/pomodoro/friends/activity/' %}text-violet-600 dark:text-violet-400{% else %}hover:text-violet-500{% endif %} transition">
-          Activity
-        </a>
-      </li>
-
-      <li>
-        <a href="{% url 'logout' %}" class="text-red-500 hover:text-red-600 transition">
-          Logout
-        </a>
-      </li>
-
-    </ul>
+      <!-- Tema İkonu -->
+      <i id="theme-icon" onclick="toggleTheme()" class="bi bi-moon-fill text-2xl cursor-pointer text-gray-800 dark:text-gray-100"></i>
+    </div>
   {% endif %}
 </nav>
+
 
     <!-- PAGE CONTENT -->
     <main class="flex-1 pt-[140px] z-10 relative px-4 max-w-4xl mx-auto w-full">
@@ -156,4 +148,30 @@
 
   </body>
 </html>
+<style>
+  /* Light mode için yazı renkleri */
+  body[data-theme="light"] .profile-card,
+  body[data-theme="light"] .profile-card * {
+    color: #1f2937 !important; /* Tailwind slate-800 */
+  }
+
+  /* Light modda input alanlarının görünmesi için */
+  body[data-theme="light"] .profile-card input,
+  body[data-theme="light"] .profile-card textarea,
+  body[data-theme="light"] .profile-card select {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    color: #1f2937 !important;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  /* Light modda placeholder görünürlüğü */
+  body[data-theme="light"] .profile-card input::placeholder {
+    color: #4b5563 !important;
+  }
+
+  /* Dark modda yazılar zaten beyaz */
+  body[data-theme="dark"] .profile-card {
+    color: #f3f4f6 !important;
+  }
+</style>
 

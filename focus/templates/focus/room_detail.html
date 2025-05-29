@@ -7,7 +7,7 @@
   </h2>
 
   <div class="mb-8 text-center">
-    <h3 class="text-lg font-semibold text-gray-700 dark:text-white mb-2">🟢 Aktif Katılımcılar</h3>
+    <h3 class="text-lg font-semibold text-gray-700 dark:text-white mb-2">🟢 Active Participants</h3>
     <ul class="space-y-1">
       {% for participant in participants %}
         <li class="text-sm text-gray-800 dark:text-gray-300">
@@ -29,7 +29,7 @@
           {% endif %}
         </li>
       {% empty %}
-        <li class="text-sm text-gray-500 italic">Henüz kimse yok... İlk sen ol! 💫</li>
+        <li class="text-sm text-gray-500 italic">There is no one yet, be the first 💫</li>
       {% endfor %}
     </ul>
   </div>
@@ -40,15 +40,15 @@
 
       <input type="hidden" name="action" value="stop">
       <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full text-sm font-medium transition">
-        🔴 Çalışmayı Bitir
+        🔴 Finish Focuzing
       </button>
     {% else %}
       <input type="hidden" name="action" value="start">
       <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full text-sm font-medium transition">
-        ⏱ Çalışmaya Başla
+        ⏱ Start Focuzing
       </button>
     {% endif %}
   </form>
-  
+</div>  
 
 {% endblock %}

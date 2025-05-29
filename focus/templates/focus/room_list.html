@@ -2,7 +2,12 @@
 {% block content %}
 
 <div class="max-w-4xl mx-auto p-8 rounded-xl bg-white/60 dark:bg-white/5 shadow-lg backdrop-blur text-gray-900 dark:text-white">
-  <h2 class="text-3xl font-bold text-center text-purple-800 dark:text-purple-300 mb-8">🎯 Focus Rooms</h2>
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-3xl font-bold text-purple-800 dark:text-purple-300">🎯 Focus Rooms</h2>
+    <a href="{% url 'focus:create_room' %}" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
+      ➕ Oda Oluştur
+    </a>
+  </div>
 
   {% if rooms %}
     <div class="grid gap-6 grid-cols-1 md:grid-cols-2">
@@ -10,7 +15,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-xl transition hover:scale-[1.02]">
           <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ room.name }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Created by: {{ room.created_by.username }}</p>
-          <a href="{% url 'join_room' room.id %}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+          <a href="{% url 'focus:join_room' room.id %}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
             🚪 Join Room
           </a>
         </div>
