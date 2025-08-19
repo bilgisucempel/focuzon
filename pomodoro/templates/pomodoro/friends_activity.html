@@ -1,36 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="max-w-3xl mx-auto p-8 text-white">
-    <h2 class="text-3xl font-bold mb-6 text-center">👀 Your Friends' Activity Today</h2>
+    <h2 class="text-3xl font-bold mb-8 text-center">👀 Friends' Focus Activity</h2>
 
     {% if friend_stats %}
-        <table class="w-full text-left border-separate border-spacing-y-4">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Today's activity</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for f in friend_stats %}
-                    <tr class="bg-white/10 backdrop-blur p-4 rounded-lg shadow">
-                        <td class="py-3 px-4 font-semibold">{{ f.username }}</td>
-                        <td class="py-3 px-4">{{ f.total_today }} dk</td>
-                        <td class="py-3 px-4">
-                            {% if f.is_active %}
-                                <span class="text-green-400 animate-pulse">🟢 FOCUZING</span>
-
-                            {% else %}
-                                <span class="text-gray-400">😴 Avaliable</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="space-y-4">
+            {% for f in friend_stats %}
+                <div class="flex items-center justify-between bg-white/10 backdrop-blur p-4 rounded-xl shadow hover:bg-white/20 transition">
+                    <div>
+                        <p class="font-semibold text-lg">{{ f.username }}</p>
+                        <p class="text-gray-300 text-sm">Today's Focus: <span class="font-medium">{{ f.total_today }} min</span></p>
+                    </div>
+                    <div>
+                        {% if f.is_active %}
+                            <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 font-semibold text-sm animate-pulse">
+                                🟢 FOCUZING
+                            </span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 font-semibold text-sm">
+                                😴 Available
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p class="text-center text-gray-300">You don't have any friends yet. 😢</p>
+        <p class="text-center text-gray-400 mt-8">
+            You don’t have any friends yet... <br> 
+            <span class="text-sm">Invite someone and start focuzing together 🚀</span>
+        </p>
     {% endif %}
 </div>
 {% endblock %}

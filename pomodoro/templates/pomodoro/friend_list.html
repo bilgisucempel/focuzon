@@ -4,102 +4,226 @@
 
 {% block content %}
 <style>
-    .friend-page-container {
-        max-width: 900px;
-        margin: 60px auto;
-        padding: 40px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        text-align: center;
-        backdrop-filter: blur(12px);
-        color: white;
-    }
+  :root{
+    --glass-bg: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+    --card-bg: rgba(255,255,255,0.10);
+    --card-bg-hover: rgba(255,255,255,0.16);
+    --chip-online: #22c55e;  /* green-500 */
+    --chip-idle: #9ca3af;    /* gray-400 */
+    --accent: #8b5cf6;       /* violet-500 */
+    --accent-2: #22d3ee;     /* cyan-400 */
+  }
 
-    .friend-title {
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
+  .friend-wrap {
+    max-width: 1000px;
+    margin: 56px auto;
+    padding: 28px;
+    color: #fff;
+  }
 
-    .friend-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 25px;
-        margin-top: 20px;
-    }
+  .glass-panel {
+    background: var(--glass-bg);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+    backdrop-filter: blur(12px);
+  }
 
-    .friend-card {
-        background: rgba(255, 255, 255, 0.12);
-        padding: 20px;
-        border-radius: 15px;
-        width: 160px;
-        text-align: center;
-        box-shadow: 0 6px 15px rgba(135, 75, 233, 0.3);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 18px;
+  }
 
-    .friend-card:hover {
-        transform: scale(1.06);
-        box-shadow: 0 10px 25px rgba(135, 75, 233, 0.5);
-    }
+  .title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .title .grad {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 
-    .profile-pic {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        object-fit: cover;
-        margin-bottom: 10px;
-        transition: transform 0.3s ease;
-    }
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
 
-    .profile-pic:hover {
-        transform: rotate(3deg) scale(1.05);
-    }
-
-    .no-friends {
-        font-size: 18px;
-        margin-top: 30px;
-        opacity: 0.8;
-    }
-    .add-friend-btn {
-    display: inline-block;
-    margin-top: 10px;
-    margin-bottom: 30px;
-    background-color: #38bdf8;
-    color: white;
-    padding: 10px 20px;
+  .search {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px 14px;
     border-radius: 12px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-.add-friend-btn:hover {
-    background-color: #0ea5e9;
-    transform: scale(1.05);
-}
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .search input{
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: #fff;
+  }
 
+  .add-btn {
+    display: inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #0b1020;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .18s ease, box-shadow .18s ease;
+    box-shadow: 0 10px 24px rgba(139,92,246,.35);
+    white-space: nowrap;
+  }
+  .add-btn:hover { transform: translateY(-1px) scale(1.02); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat( auto-fill, minmax(180px, 1fr) );
+    gap: 16px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    padding: 16px;
+    text-align: center;
+    transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+  }
+  .card:hover{
+    transform: translateY(-4px);
+    background: var(--card-bg-hover);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  }
+
+  .avatar-wrap {
+    position: relative;
+    width: 96px; height: 96px;
+    margin: 4px auto 10px;
+  }
+  .avatar {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.9);
+    object-fit: cover;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+  .dot {
+    position: absolute; right: -2px; bottom: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid #0b1020;
+  }
+  .dot.online { background: var(--chip-online); }
+  .dot.idle { background: var(--chip-idle); }
+
+  .name {
+    font-weight: 700;
+    margin-bottom: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .meta {
+    font-size: 12px; color: #cbd5e1;  /* slate-300 */
+    margin-bottom: 10px;
+  }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+  .chip.online { color: #bbf7d0; border-color: rgba(34,197,94,.35); }
+  .chip.idle   { color: #e5e7eb; border-color: rgba(156,163,175,.35); }
+
+  .empty {
+    text-align: center; opacity: .9; padding: 36px 8px;
+  }
+  .empty img { width: 140px; height: auto; opacity: .95; margin-bottom: 10px; }
 </style>
 
-<div class="friend-page-container">
-    <h2 class="friend-title">👥 Your Friends</h2>
-    <a href="{% url 'user_list' %}" class="add-friend-btn">➕ Add new friends</a>
+<div class="friend-wrap">
+  <div class="glass-panel">
+    <div class="header-row">
+      <h2 class="title">👥 <span class="grad">Your Friends</span></h2>
+      <a href="{% url 'user_list' %}" class="add-btn">➕ Add new friends</a>
+    </div>
 
+    <div class="toolbar">
+      <label class="search" for="friend-search">
+        🔎
+        <input id="friend-search" type="text" placeholder="Search friends by name…">
+      </label>
+      <!-- future: a filter dropdown can go here -->
+    </div>
 
     {% if friends %}
-        <div class="friend-container">
-            {% for friend in friends %}
+      <div class="grid" id="friend-grid">
+        {% for friend in friends %}
+          <div class="card" data-name="{{ friend.username|lower }}">
+            <div class="avatar-wrap">
+              {% if friend.profile.image %}
+                <img loading="lazy" src="{{ friend.profile.image.url }}" alt="{{ friend.username }}" class="avatar">
+              {% elif friend.avatar_url %}
+                <img loading="lazy" src="{{ friend.avatar_url }}" alt="{{ friend.username }}" class="avatar">
+              {% else %}
+                <img loading="lazy" src="https://api.dicebear.com/9.x/initials/svg?seed={{ friend.username|urlencode }}&radius=50&scale=110" alt="{{ friend.username }}" class="avatar">
+              {% endif %}
+              <span class="dot {% if friend.is_active %}online{% else %}idle{% endif %}"></span>
+            </div>
 
-                <div class="friend-card">
-                    <img src="https://via.placeholder.com/100" alt="Profil Resmi" class="profile-pic">
-                    <p>{{ friend.username }}</p>
-                </div>
-            {% endfor %}
-        </div>
+            <div class="name" title="{{ friend.username }}">{{ friend.username }}</div>
+
+            <div class="meta">
+              {% if friend.total_today %}
+                Today: <strong>{{ friend.total_today }} min</strong>
+              {% else %}
+                No focus yet today
+              {% endif %}
+            </div>
+
+            <span class="chip {% if friend.is_active %}online{% else %}idle{% endif %}">
+              {% if friend.is_active %}🟢 FOCUZING{% else %}😴 Available{% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
     {% else %}
-        <p class="no-friends">Hiç arkadaşın yok 😢 Hadi yeni arkadaşlar ekle!</p>
+      <div class="empty">
+        <img src="https://illustrations.popsy.co/gray/person-sitting-2.svg" alt="No friends yet">
+        <div>No friends yet 😢</div>
+        <div style="font-size:12px; opacity:.85; margin-top:6px;">Invite someone and start focuzing together 🚀</div>
+      </div>
     {% endif %}
+  </div>
 </div>
-{% endblock %} 
+
+<script>
+  // Basit client-side arama
+  (function () {
+    const input = document.getElementById('friend-search');
+    const grid  = document.getElementById('friend-grid');
+    if (!input || !grid) return;
+
+    input.addEventListener('input', function(){
+      const q = this.value.trim().toLowerCase();
+      [...grid.children].forEach(card => {
+        const name = card.getAttribute('data-name') || '';
+        card.style.display = name.includes(q) ? '' : 'none';
+      });
+    });
+  })();
+</script>
+{% endblock %}
